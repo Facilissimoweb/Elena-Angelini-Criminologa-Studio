@@ -22,6 +22,30 @@ const languageFlags: Record<Language, string> = {
   hi: '🇮🇳'
 };
 
+const languageGroups = [
+  {
+    title: {
+      it: "EUROPA OCCIDENTALE",
+      en: "WESTERN EUROPE"
+    },
+    codes: ['it', 'en', 'fr', 'de', 'es', 'pt', 'nl'] as Language[]
+  },
+  {
+    title: {
+      it: "EUROPA ORIENTALE & BALCANI",
+      en: "EASTERN EUROPE & BALKANS"
+    },
+    codes: ['ro', 'pl', 'tr', 'sq', 'ru'] as Language[]
+  },
+  {
+    title: {
+      it: "ASIA & MEDIO ORIENTE",
+      en: "ASIA & MIDDLE EAST"
+    },
+    codes: ['zh', 'ja', 'ar', 'hi'] as Language[]
+  }
+];
+
 interface HeaderProps {
   lang: Language;
   setLang: (lang: Language) => void;
@@ -141,7 +165,7 @@ export default function Header({
 
         {/* CONTROLS */}
         <div className="flex items-center space-x-3">
-          {/* Drastically reduced Flag-Only Language Selector */}
+          {/* Grouped Language Dropdown - Poppins Uppercase */}
           <div className="relative">
             {langDropdownOpen && (
               <div 
@@ -152,10 +176,12 @@ export default function Header({
             <button
               onClick={() => setLangDropdownOpen(!langDropdownOpen)}
               id="flag-language-picker-trigger"
-              className="relative z-50 flex items-center justify-center w-7 h-7 rounded-full bg-slate-900 border border-slate-800 hover:border-cold-500/80 hover:bg-slate-800/50 transition-all text-sm shadow-md active:scale-95 focus:outline-none cursor-pointer"
+              className="relative z-50 flex items-center space-x-2 px-2.5 py-1.5 rounded bg-slate-900 border border-slate-800 hover:border-cold-500/80 hover:bg-slate-800/50 transition-all text-xs font-serif font-bold uppercase tracking-wider shadow-md active:scale-95 focus:outline-none cursor-pointer text-slate-300"
+              style={{ fontFamily: 'Poppins, sans-serif' }}
               title="Change Language // Cambia Lingua"
             >
               <span>{languageFlags[lang] || '🇮🇹'}</span>
+              <span className="text-[10px]">{lang}</span>
             </button>
 
             <AnimatePresence>
@@ -165,26 +191,55 @@ export default function Header({
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: -5 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute right-0 mt-2 z-50 bg-slate-950/95 backdrop-blur-md border border-slate-900/60 p-2 rounded-lg shadow-2xl w-44"
+                  className="absolute right-0 mt-2 z-50 bg-slate-950/98 backdrop-blur-md border border-slate-900/80 p-3.5 rounded-lg shadow-2xl w-64 max-h-[380px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-800"
                   id="flag-dropdown-panel"
                 >
-                  <div className="grid grid-cols-4 gap-1.5 justify-items-center">
-                    {languagesList.map((l) => {
-                      const isSelected = lang === l.code;
+                  <div className="space-y-4">
+                    {languageGroups.map((group, groupIndex) => {
+                      const groupTitle = lang === 'it' || !lang ? group.title.it : group.title.en;
                       return (
-                        <button
-                          key={l.code}
-                          onClick={() => {
-                            setLang(l.code);
-                            setLangDropdownOpen(false);
-                          }}
-                          className={`flex items-center justify-center w-8 h-8 text-base rounded transition-all hover:bg-cold-500/20 hover:scale-115 active:scale-90 cursor-pointer ${
-                            isSelected ? 'bg-cyan-500/15 border border-cyan-500/40' : 'border border-transparent'
-                          }`}
-                          title={l.name}
-                        >
-                          <span>{languageFlags[l.code] || '🇮🇹'}</span>
-                        </button>
+                        <div key={groupIndex} className="space-y-1.5">
+                          {/* Group Title in Poppins Uppercase */}
+                          <div 
+                            className="text-[9px] font-bold text-slate-500 tracking-widest px-2 py-0.5 bg-slate-900/40 rounded-sm font-serif uppercase"
+                            style={{ fontFamily: 'Poppins, sans-serif' }}
+                          >
+                            {groupTitle}
+                          </div>
+                          {/* Group Languages */}
+                          <div className="space-y-1">
+                            {group.codes.map((code) => {
+                              const l = languagesList.find((item) => item.code === code);
+                              if (!l) return null;
+                              const isSelected = lang === code;
+                              return (
+                                <button
+                                  key={code}
+                                  onClick={() => {
+                                    setLang(code);
+                                    setLangDropdownOpen(false);
+                                  }}
+                                  className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded transition-all cursor-pointer text-left ${
+                                    isSelected 
+                                      ? 'bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-bold' 
+                                      : 'border border-transparent text-slate-300 hover:bg-slate-900/60 hover:text-cold-400'
+                                  }`}
+                                >
+                                  <span 
+                                    className="text-[10px] font-serif font-semibold uppercase tracking-wider flex items-center space-x-2"
+                                    style={{ fontFamily: 'Poppins, sans-serif' }}
+                                  >
+                                    <span className="text-sm leading-none shrink-0">{languageFlags[code] || '🇮🇹'}</span>
+                                    <span>{l.name.toUpperCase()}</span>
+                                  </span>
+                                  {isSelected && (
+                                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0" />
+                                  )}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
                       );
                     })}
                   </div>
