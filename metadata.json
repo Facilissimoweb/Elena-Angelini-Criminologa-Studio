@@ -1,0 +1,6 @@
+{
+  "name": "Studio Criminalistica Elena Angelini",
+  "description": "Studio di Criminologia, Criminalistica e Scienze Forensi Elena Angelini. Consulenze scientifiche, ricostruzione 3D delle scene del crimine e indagini difensive.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
