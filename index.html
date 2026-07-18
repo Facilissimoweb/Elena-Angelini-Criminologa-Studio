@@ -4,6 +4,45 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Studio Criminalistica Elena Angelini</title>
+    <script type="text/javascript">
+      // Safe, defensive handling for sandboxed environments & third-party script blockage
+      (function() {
+        var suppress = function(msg) {
+          if (!msg) return false;
+          var m = String(msg).toLowerCase();
+          return m.indexOf('script error') !== -1 || 
+                 m.indexOf('google') !== -1 || 
+                 m.indexOf('translate') !== -1 ||
+                 m.indexOf('googtrans') !== -1;
+        };
+
+        window.onerror = function(message, source, lineno, colno, error) {
+          if (suppress(message) || suppress(source)) {
+            console.warn('Caught cross-origin third-party script error via onerror:', message);
+            return true; // Prevents the firing of the default event handler
+          }
+        };
+
+        window.addEventListener('error', function(e) {
+          if (e && (suppress(e.message) || suppress(e.filename) || e.message === 'Script error.')) {
+            console.warn('Caught cross-origin third-party script error via error listener:', e.message);
+            e.preventDefault();
+            e.stopPropagation();
+            return true;
+          }
+        }, true);
+
+        window.addEventListener('unhandledrejection', function(e) {
+          var reason = e.reason ? String(e.reason.message || e.reason) : '';
+          if (suppress(reason)) {
+            console.warn('Caught unhandled promise rejection from third-party library:', reason);
+            e.preventDefault();
+            e.stopPropagation();
+            return true;
+          }
+        });
+      })();
+    </script>
     <style>
       /* Drastically hide Google Translate's default UI frames and banners */
       .goog-te-banner-frame, 

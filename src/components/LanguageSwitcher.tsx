@@ -46,30 +46,48 @@ export default function LanguageSwitcher({ onLanguageChangeExternal }: LanguageS
 
   // 2. Inizializzazione dinamica di Google Translate
   useEffect(() => {
-    // Definisce la callback globale richiamata dallo script di Google
-    (window as any).googleTranslateElementInit = () => {
-      new (window as any).google.translate.TranslateElement({
-        pageLanguage: 'it', // La lingua nativa del codice HTML del tuo sito
-        layout: (window as any).google.translate.TranslateElement.InlineLayout.SIMPLE,
-        autoDisplay: false
-      }, 'google_translate_element');
-    };
+    // Controlla se lo script è già stato caricato o se l'oggetto google è pronto
+    const alreadyExists = !!document.querySelector('script[src*="translate.google.com"]') || !!(window as any).google?.translate;
 
-    // Carica dinamicamente lo script di Google Translate se non è già presente
-    const id = 'google-translate-script';
-    if (!document.getElementById(id)) {
-      const script = document.createElement('script');
-      script.id = id;
-      script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-      script.async = true;
-      document.body.appendChild(script);
+    if (!alreadyExists) {
+      // Definisce la callback globale richiamata dallo script di Google
+      (window as any).googleTranslateElementInit = () => {
+        try {
+          if ((window as any).google && (window as any).google.translate) {
+            new (window as any).google.translate.TranslateElement({
+              pageLanguage: 'it', // La lingua nativa del codice HTML del tuo sito
+              layout: (window as any).google.translate.TranslateElement.InlineLayout.SIMPLE,
+              autoDisplay: false
+            }, 'google_translate_element');
+          }
+        } catch (err) {
+          console.warn("Failed to initialize Google Translate element:", err);
+        }
+      };
+
+      // Carica dinamicamente lo script di Google Translate se non è già presente
+      const id = 'google-translate-script';
+      if (!document.getElementById(id)) {
+        const script = document.createElement('script');
+        script.id = id;
+        script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+        script.async = true;
+        script.onerror = (err) => {
+          console.warn("Google Translate script failed to load. Ad-blockers or sandbox restrictions might be active.", err);
+        };
+        document.body.appendChild(script);
+      }
     }
 
     // Sincronizza lo stato React leggendo il cookie "googtrans" impostato in precedenza
     const getCookie = (name: string) => {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop()?.split(';').shift();
+      try {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop()?.split(';').shift();
+      } catch (e) {
+        console.warn("Cookies are not accessible:", e);
+      }
       return null;
     };
     
@@ -92,8 +110,12 @@ export default function LanguageSwitcher({ onLanguageChangeExternal }: LanguageS
     setDropdownOpen(false);
 
     // Salva la scelta nei cookie (necessario sia per il dominio corrente che globale)
-    document.cookie = `googtrans=/it/${langCode}; path=/;`;
-    document.cookie = `googtrans=/it/${langCode}; path=/; domain=${window.location.hostname};`;
+    try {
+      document.cookie = `googtrans=/it/${langCode}; path=/;`;
+      document.cookie = `googtrans=/it/${langCode}; path=/; domain=${window.location.hostname};`;
+    } catch (e) {
+      console.warn("Failed to set cookies due to sandbox constraints:", e);
+    }
 
     if (onLanguageChangeExternal) {
       onLanguageChangeExternal(langCode);
@@ -112,8 +134,7 @@ export default function LanguageSwitcher({ onLanguageChangeExternal }: LanguageS
           retrySelectEl.value = langCode;
           retrySelectEl.dispatchEvent(new Event('change'));
         } else {
-          // Se fallisce ancora, ricarica la pagina per forzare l'applicazione del cookie
-          window.location.reload();
+          console.warn("Google Translate widget (.goog-te-combo) not found. Continuing with local translations.");
         }
       }, 400);
     }
@@ -134,9 +155,6 @@ export default function LanguageSwitcher({ onLanguageChangeExternal }: LanguageS
         </span>
         <ChevronDown className={`h-3 w-3 text-slate-500 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
       </button>
-
-      {/* Elemento contenitore di Google Translate Nascosto (OBBLIGATORIO) */}
-      <div id="google_translate_element" className="absolute opacity-0 pointer-events-none h-0 w-0 overflow-hidden" />
 
       {/* Menu a discesa personalizzato delle Lingue */}
       {dropdownOpen && (

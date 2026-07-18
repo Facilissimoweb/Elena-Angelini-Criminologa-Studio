@@ -1,10 +1,10 @@
 import { Scale, Lock, Shield, Eye, FileText, Landmark, ShieldCheck } from 'lucide-react';
-import { Language, translations } from '../types';
+import { Language, PageId, translations } from '../types';
 
 interface FooterProps {
   lang: Language;
   onOpenLegal?: (tab: 'privacy' | 'cookie' | 'terms') => void;
-  onNavigate?: (page: 'home' | 'chi-siamo' | 'servizi' | 'punti-forza' | 'testimonianze' | 'contatti' | 'faq') => void;
+  onNavigate?: (page: PageId) => void;
 }
 
 export default function Footer({ lang, onOpenLegal, onNavigate }: FooterProps) {
@@ -73,6 +73,14 @@ export default function Footer({ lang, onOpenLegal, onNavigate }: FooterProps) {
                     className="text-slate-500 hover:text-cyan-400 transition-colors cursor-pointer text-left focus:outline-none"
                   >
                     &raquo; {lang === 'it' ? 'Testimonianze & Casi' : 'Testimonials & Cases'}
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => onNavigate?.('blog')}
+                    className="text-slate-500 hover:text-cyan-400 transition-colors cursor-pointer text-left focus:outline-none"
+                  >
+                    &raquo; {lang === 'it' ? 'Blog & News' : 'Blog & News'}
                   </button>
                 </li>
               </ul>

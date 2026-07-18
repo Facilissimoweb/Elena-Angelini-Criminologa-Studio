@@ -3,7 +3,7 @@ import { translations, languagesList } from './translations';
 export type { Language };
 export { translations, languagesList };
 
-export type PageId = 'home' | 'chi-siamo' | 'servizi' | 'punti-forza' | 'testimonianze' | 'contatti' | 'faq';
+export type PageId = 'home' | 'chi-siamo' | 'servizi' | 'punti-forza' | 'testimonianze' | 'contatti' | 'faq' | 'blog';
 
 export interface ServiceItem {
   id: string;

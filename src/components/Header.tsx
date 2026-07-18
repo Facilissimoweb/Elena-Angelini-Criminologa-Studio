@@ -98,8 +98,9 @@ export default function Header({
     { id: 'servizi', labelKey: 'nav-services' },
     { id: 'punti-forza', labelKey: 'nav-why' },
     { id: 'testimonianze', labelKey: 'nav-testimonials' },
-    { id: 'contatti', labelKey: 'nav-contacts' },
+    { id: 'blog', labelKey: 'nav-blog' },
     { id: 'faq', labelKey: 'nav-faq' },
+    { id: 'contatti', labelKey: 'nav-contacts' },
   ];
 
   const handleNav = (pageId: PageId) => {

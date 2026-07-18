@@ -10,6 +10,7 @@ import BookingModal from './components/BookingModal';
 import Toast from './components/Toast';
 import Footer from './components/Footer';
 import FAQ from './components/FAQ';
+import Blog from './components/Blog';
 import ForensicChat from './components/ForensicChat';
 import AboutUs from './components/AboutUs';
 import CookieBanner from './components/CookieBanner';
@@ -41,7 +42,7 @@ export default function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '') as PageId;
-      const validPages: PageId[] = ['home', 'chi-siamo', 'servizi', 'punti-forza', 'testimonianze', 'contatti', 'faq'];
+      const validPages: PageId[] = ['home', 'chi-siamo', 'servizi', 'punti-forza', 'testimonianze', 'contatti', 'faq', 'blog'];
       if (validPages.includes(hash)) {
         setCurrentPage(hash);
       } else {
@@ -55,6 +56,11 @@ export default function App() {
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
+
+  // Scroll to the top of the page when switching between views
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [currentPage]);
 
   // Initialize Google Analytics 4 if consent is already recorded and allowed
   useEffect(() => {
@@ -161,6 +167,13 @@ export default function App() {
 
             {currentPage === 'faq' && (
               <FAQ
+                lang={lang}
+                onNavigateToContact={() => handlePageChange('contatti')}
+              />
+            )}
+
+            {currentPage === 'blog' && (
+              <Blog
                 lang={lang}
                 onNavigateToContact={() => handlePageChange('contatti')}
               />

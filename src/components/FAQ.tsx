@@ -17,6 +17,18 @@ interface FAQItem {
 
 const faqData: FAQItem[] = [
   {
+    id: 'faq0',
+    category: { it: 'Servizi dello Studio', en: 'Studio Services' },
+    question: {
+      it: 'Quali sono i servizi principali offerti dallo Studio Criminalistica?',
+      en: 'What are the main services provided by the Forensic Studio?'
+    },
+    answer: {
+      it: 'Lo Studio offre consulenza tecnica e perizie di parte (CTP) in tre macro-aree: Grafologia Forense (verifica di firme, testamenti e lettere anonime), Analisi Documentale (verifica di falsi materiali su contratti, assegni e documenti d\'identità), e Criminalistica Applicata (ricostruzione 3D balistica/cinematica tramite la piattaforma FORA, BPA, e supporto alla difesa penale e civile).',
+      en: 'The Studio provides expert technical consultation and defense reports (CTP) in three main areas: Forensic Graphology (handwriting verification, wills, and anonymous letters), Document Analysis (detecting physical forgery in contracts, checks, and identity papers), and Applied Criminalistics (3D ballistic/kinematic event reconstruction using the FORA platform, Bloodstain Pattern Analysis, and expert witness support).'
+    }
+  },
+  {
     id: 'faq1',
     category: { it: 'Ammissibilità Legale', en: 'Legal Admissibility' },
     question: {
