@@ -12,6 +12,8 @@ import Footer from './components/Footer';
 import FAQ from './components/FAQ';
 import ForensicChat from './components/ForensicChat';
 import AboutUs from './components/AboutUs';
+import CookieBanner from './components/CookieBanner';
+import LegalModal, { getStoredConsent, loadGA4 } from './components/LegalModal';
 import { Language, PageId, translations } from './types';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -19,6 +21,10 @@ export default function App() {
   const [lang, setLang] = useState<Language>('it');
   const [currentPage, setCurrentPage] = useState<PageId>('home');
   const [bookingOpen, setBookingOpen] = useState(false);
+
+  // Legal and cookie settings modal state
+  const [legalModalOpen, setLegalModalOpen] = useState(false);
+  const [legalModalTab, setLegalModalTab] = useState<'privacy' | 'cookie' | 'terms'>('privacy');
   
   // Toast state
   const [toastOpen, setToastOpen] = useState(false);
@@ -48,6 +54,14 @@ export default function App() {
 
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // Initialize Google Analytics 4 if consent is already recorded and allowed
+  useEffect(() => {
+    const consent = getStoredConsent();
+    if (consent.analytics) {
+      loadGA4();
+    }
   }, []);
 
   const handlePageChange = (page: PageId) => {
@@ -148,7 +162,13 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <Footer lang={lang} />
+      <Footer 
+        lang={lang} 
+        onOpenLegal={(tab) => {
+          setLegalModalTab(tab);
+          setLegalModalOpen(true);
+        }}
+      />
 
       {/* Booking Dialogue Popup */}
       <BookingModal
@@ -168,6 +188,23 @@ export default function App() {
 
       {/* Floating Forensic Chatbot Assistant (Adaptive full-screen on mobile) */}
       <ForensicChat lang={lang} />
+
+      {/* Cookie Consent Floating Bottom Banner */}
+      <CookieBanner
+        lang={lang}
+        onOpenPreferences={() => {
+          setLegalModalTab('cookie');
+          setLegalModalOpen(true);
+        }}
+      />
+
+      {/* Granular GDPR Cookie Consent, Privacy Policy & Terms of Service Reader Modal */}
+      <LegalModal
+        isOpen={legalModalOpen}
+        onClose={() => setLegalModalOpen(false)}
+        lang={lang}
+        initialTab={legalModalTab}
+      />
 
     </div>
   );
