@@ -250,281 +250,289 @@ export default function LegalModal({ isOpen, onClose, lang, initialTab = 'privac
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-0">
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-slate-950/90 backdrop-blur-md"
+            className="absolute inset-0 bg-slate-950/95 backdrop-blur-md"
             onClick={onClose}
           />
 
-          {/* Modal Card */}
+          {/* Modal Card - Full Page */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 15 }}
+            initial={{ opacity: 0, scale: 1, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 15 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="relative w-full max-w-4xl h-[85vh] bg-slate-950 border border-slate-900/90 rounded-xl overflow-hidden shadow-2xl flex flex-col z-10 scanlines"
+            exit={{ opacity: 0, scale: 1, y: 30 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+            className="relative w-screen h-screen bg-slate-950 flex flex-col z-10 scanlines overflow-hidden"
           >
-            {/* HUD / Header bar */}
-            <div className="bg-slate-950 px-6 py-4 border-b border-slate-900 flex justify-between items-center select-none shrink-0">
-              <div className="flex items-center space-x-3">
-                <Shield className="w-5 h-5 text-cyan-500 animate-pulse" />
-                <span 
-                  className="text-xs font-bold text-slate-300 tracking-widest font-serif"
-                  style={{ fontFamily: 'Poppins, sans-serif' }}
+            {/* HUD / Header bar (Centered content wrapper) */}
+            <div className="bg-slate-950 border-b border-slate-900 shrink-0">
+              <div className="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center select-none">
+                <div className="flex items-center space-x-3">
+                  <Shield className="w-5 h-5 text-cyan-500 animate-pulse" />
+                  <span 
+                    className="text-xs font-bold text-slate-300 tracking-widest font-serif uppercase"
+                    style={{ fontFamily: 'Poppins, sans-serif' }}
+                  >
+                    {t.title}
+                  </span>
+                </div>
+                <button 
+                  onClick={onClose}
+                  className="text-slate-500 hover:text-white transition-colors cursor-pointer p-1.5 rounded-full hover:bg-slate-900 flex items-center justify-center"
                 >
-                  {t.title}
-                </span>
+                  <X className="w-4 h-4" />
+                </button>
               </div>
-              <button 
-                onClick={onClose}
-                className="text-slate-500 hover:text-white transition-colors cursor-pointer p-1 rounded-full hover:bg-slate-900"
-              >
-                <X className="w-4 h-4" />
-              </button>
             </div>
 
-            {/* TAB SELECTORS - Poppins Uppercase */}
-            <div className="bg-slate-950 border-b border-slate-900 px-6 flex space-x-2 shrink-0 overflow-x-auto select-none">
-              <button
-                onClick={() => setActiveTab('privacy')}
-                className={`py-3 px-4 text-xs font-bold tracking-wider border-b-2 transition-all cursor-pointer font-serif whitespace-nowrap ${
-                  activeTab === 'privacy' 
-                    ? 'border-cyan-500 text-cyan-400' 
-                    : 'border-transparent text-slate-500 hover:text-slate-300'
-                }`}
-                style={{ fontFamily: 'Poppins, sans-serif' }}
-              >
-                <div className="flex items-center space-x-2">
-                  <Eye className="w-3.5 h-3.5" />
-                  <span>{t.tabs.privacy}</span>
-                </div>
-              </button>
-              <button
-                onClick={() => setActiveTab('cookie')}
-                className={`py-3 px-4 text-xs font-bold tracking-wider border-b-2 transition-all cursor-pointer font-serif whitespace-nowrap ${
-                  activeTab === 'cookie' 
-                    ? 'border-cyan-500 text-cyan-400' 
-                    : 'border-transparent text-slate-500 hover:text-slate-300'
-                }`}
-                style={{ fontFamily: 'Poppins, sans-serif' }}
-              >
-                <div className="flex items-center space-x-2">
-                  <Shield className="w-3.5 h-3.5" />
-                  <span>{t.tabs.cookie}</span>
-                </div>
-              </button>
-              <button
-                onClick={() => setActiveTab('terms')}
-                className={`py-3 px-4 text-xs font-bold tracking-wider border-b-2 transition-all cursor-pointer font-serif whitespace-nowrap ${
-                  activeTab === 'terms' 
-                    ? 'border-cyan-500 text-cyan-400' 
-                    : 'border-transparent text-slate-500 hover:text-slate-300'
-                }`}
-                style={{ fontFamily: 'Poppins, sans-serif' }}
-              >
-                <div className="flex items-center space-x-2">
-                  <FileText className="w-3.5 h-3.5" />
-                  <span>{t.tabs.terms}</span>
-                </div>
-              </button>
+            {/* TAB SELECTORS - Centered content wrapper */}
+            <div className="bg-slate-950 border-b border-slate-900 shrink-0 select-none">
+              <div className="max-w-4xl mx-auto px-6 flex space-x-2 overflow-x-auto select-none">
+                <button
+                  onClick={() => setActiveTab('privacy')}
+                  className={`py-3 px-4 text-xs font-bold tracking-wider border-b-2 transition-all cursor-pointer font-serif whitespace-nowrap ${
+                    activeTab === 'privacy' 
+                      ? 'border-cyan-500 text-cyan-400 font-extrabold' 
+                      : 'border-transparent text-slate-500 hover:text-slate-300'
+                  }`}
+                  style={{ fontFamily: 'Poppins, sans-serif' }}
+                >
+                  <div className="flex items-center space-x-2">
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>{t.tabs.privacy}</span>
+                  </div>
+                </button>
+                <button
+                  onClick={() => setActiveTab('cookie')}
+                  className={`py-3 px-4 text-xs font-bold tracking-wider border-b-2 transition-all cursor-pointer font-serif whitespace-nowrap ${
+                    activeTab === 'cookie' 
+                      ? 'border-cyan-500 text-cyan-400 font-extrabold' 
+                      : 'border-transparent text-slate-500 hover:text-slate-300'
+                  }`}
+                  style={{ fontFamily: 'Poppins, sans-serif' }}
+                >
+                  <div className="flex items-center space-x-2">
+                    <Shield className="w-3.5 h-3.5" />
+                    <span>{t.tabs.cookie}</span>
+                  </div>
+                </button>
+                <button
+                  onClick={() => setActiveTab('terms')}
+                  className={`py-3 px-4 text-xs font-bold tracking-wider border-b-2 transition-all cursor-pointer font-serif whitespace-nowrap ${
+                    activeTab === 'terms' 
+                      ? 'border-cyan-500 text-cyan-400 font-extrabold' 
+                      : 'border-transparent text-slate-500 hover:text-slate-300'
+                  }`}
+                  style={{ fontFamily: 'Poppins, sans-serif' }}
+                >
+                  <div className="flex items-center space-x-2">
+                    <FileText className="w-3.5 h-3.5" />
+                    <span>{t.tabs.terms}</span>
+                  </div>
+                </button>
+              </div>
             </div>
 
-            {/* SCROLLABLE CONTENT BODY */}
-            <div className="flex-grow overflow-y-auto p-6 md:p-8 bg-slate-950/60 custom-scrollbar">
-              
-              {/* Tab 1: Privacy Policy */}
-              {activeTab === 'privacy' && (
-                <div className="space-y-4 max-w-none">
-                  {renderMarkdown(t.privacyContent)}
-                </div>
-              )}
-
-              {/* Tab 2: Cookie Policy & Consent Manager */}
-              {activeTab === 'cookie' && (
-                <div className="space-y-6">
-                  {/* Explanation Policy header */}
-                  <div className="p-4 bg-slate-900/30 rounded-lg border border-slate-900/50">
-                    <h3 
-                      className="text-xs font-bold text-slate-300 mb-1.5 font-serif uppercase tracking-wider"
-                      style={{ fontFamily: 'Poppins, sans-serif' }}
-                    >
-                      {t.cookieSettings.title}
-                    </h3>
-                    <p className="text-[11px] text-slate-400 leading-relaxed text-justify">
-                      {t.cookieSettings.desc}
-                    </p>
-                  </div>
-
-                  {/* GRANULAR COOKIE CONTROLS */}
-                  <div className="space-y-4">
-                    
-                    {/* Necessary Cookies */}
-                    <div className="p-4 rounded-xl border border-slate-900 bg-slate-900/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                      <div className="space-y-1 max-w-xl">
-                        <div className="flex items-center space-x-2">
-                          <Check className="w-4 h-4 text-cyan-500" />
-                          <h4 
-                            className="text-xs font-bold text-slate-200 font-serif tracking-wide uppercase"
-                            style={{ fontFamily: 'Poppins, sans-serif' }}
-                          >
-                            {t.cookieSettings.essentialTitle}
-                          </h4>
-                        </div>
-                        <p className="text-[10px] text-slate-400 leading-relaxed">
-                          {t.cookieSettings.essentialDesc}
-                        </p>
-                      </div>
-                      <div className="shrink-0 flex items-center md:justify-end">
-                        <span className="text-[9px] font-mono font-bold text-cyan-400/90 bg-cyan-950/30 border border-cyan-900/40 px-2 py-1 rounded">
-                          {t.cookieSettings.statusAlwaysActive}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Analytics Cookies */}
-                    <div className="p-4 rounded-xl border border-slate-900 bg-slate-900/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                      <div className="space-y-1 max-w-xl">
-                        <button 
-                          onClick={toggleAnalytics}
-                          className="flex items-center space-x-2 text-left hover:text-cyan-400 transition-colors focus:outline-none cursor-pointer"
-                        >
-                          {consent.analytics ? (
-                            <CheckSquare className="w-4 h-4 text-cyan-500" />
-                          ) : (
-                            <Square className="w-4 h-4 text-slate-500" />
-                          )}
-                          <h4 
-                            className="text-xs font-bold text-slate-200 font-serif tracking-wide uppercase hover:text-cyan-400 transition-colors"
-                            style={{ fontFamily: 'Poppins, sans-serif' }}
-                          >
-                            {t.cookieSettings.analyticsTitle}
-                          </h4>
-                        </button>
-                        <p className="text-[10px] text-slate-400 leading-relaxed">
-                          {t.cookieSettings.analyticsDesc}
-                        </p>
-                      </div>
-                      <div className="shrink-0 flex items-center md:justify-end space-x-2.5">
-                        <button
-                          onClick={toggleAnalytics}
-                          className={`w-11 h-6 rounded-full p-0.5 transition-colors cursor-pointer focus:outline-none ${
-                            consent.analytics ? 'bg-cyan-500' : 'bg-slate-800'
-                          }`}
-                        >
-                          <div
-                            className={`bg-slate-950 w-5 h-5 rounded-full shadow-md transform duration-200 ease-out flex items-center justify-center ${
-                              consent.analytics ? 'translate-x-5' : 'translate-x-0'
-                            }`}
-                          >
-                            {consent.analytics && <Check className="w-3 h-3 text-cyan-400" />}
-                          </div>
-                        </button>
-                        <span className={`text-[9px] font-mono font-bold w-40 text-left ${consent.analytics ? 'text-cyan-400/90' : 'text-slate-500'}`}>
-                          {consent.analytics ? t.cookieSettings.statusActive : t.cookieSettings.statusInactive}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Functional Cookies */}
-                    <div className="p-4 rounded-xl border border-slate-900 bg-slate-900/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                      <div className="space-y-1 max-w-xl">
-                        <button 
-                          onClick={toggleFunctional}
-                          className="flex items-center space-x-2 text-left hover:text-cyan-400 transition-colors focus:outline-none cursor-pointer"
-                        >
-                          {consent.functional ? (
-                            <CheckSquare className="w-4 h-4 text-cyan-500" />
-                          ) : (
-                            <Square className="w-4 h-4 text-slate-500" />
-                          )}
-                          <h4 
-                            className="text-xs font-bold text-slate-200 font-serif tracking-wide uppercase hover:text-cyan-400 transition-colors"
-                            style={{ fontFamily: 'Poppins, sans-serif' }}
-                          >
-                            {t.cookieSettings.functionalTitle}
-                          </h4>
-                        </button>
-                        <p className="text-[10px] text-slate-400 leading-relaxed">
-                          {t.cookieSettings.functionalDesc}
-                        </p>
-                      </div>
-                      <div className="shrink-0 flex items-center md:justify-end space-x-2.5">
-                        <button
-                          onClick={toggleFunctional}
-                          className={`w-11 h-6 rounded-full p-0.5 transition-colors cursor-pointer focus:outline-none ${
-                            consent.functional ? 'bg-cyan-500' : 'bg-slate-800'
-                          }`}
-                        >
-                          <div
-                            className={`bg-slate-950 w-5 h-5 rounded-full shadow-md transform duration-200 ease-out flex items-center justify-center ${
-                              consent.functional ? 'translate-x-5' : 'translate-x-0'
-                            }`}
-                          >
-                            {consent.functional && <Check className="w-3 h-3 text-cyan-400" />}
-                          </div>
-                        </button>
-                        <span className={`text-[9px] font-mono font-bold w-40 text-left ${consent.functional ? 'text-cyan-400/90' : 'text-slate-500'}`}>
-                          {consent.functional ? t.cookieSettings.statusActive : t.cookieSettings.statusInactive}
-                        </span>
-                      </div>
-                    </div>
-
-                  </div>
-
-                  <hr className="border-slate-900 my-2" />
-
-                  {/* Standard Detailed Text */}
+            {/* SCROLLABLE CONTENT BODY - Centered content wrapper */}
+            <div className="flex-grow overflow-y-auto bg-slate-950/60 custom-scrollbar py-8 px-6 md:px-8">
+              <div className="max-w-4xl mx-auto w-full">
+                
+                {/* Tab 1: Privacy Policy */}
+                {activeTab === 'privacy' && (
                   <div className="space-y-4 max-w-none">
-                    {renderMarkdown(t.cookieContent)}
+                    {renderMarkdown(t.privacyContent)}
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* Tab 3: Terms of Service */}
-              {activeTab === 'terms' && (
-                <div className="space-y-4 max-w-none">
-                  {renderMarkdown(t.termsContent)}
-                </div>
-              )}
+                {/* Tab 2: Cookie Policy & Consent Manager */}
+                {activeTab === 'cookie' && (
+                  <div className="space-y-6">
+                    {/* Explanation Policy header */}
+                    <div className="p-4 bg-slate-900/30 rounded-lg border border-slate-900/50">
+                      <h3 
+                        className="text-xs font-bold text-slate-300 mb-1.5 font-serif uppercase tracking-wider"
+                        style={{ fontFamily: 'Poppins, sans-serif' }}
+                      >
+                        {t.cookieSettings.title}
+                      </h3>
+                      <p className="text-[11px] text-slate-400 leading-relaxed text-justify">
+                        {t.cookieSettings.desc}
+                      </p>
+                    </div>
 
+                    {/* GRANULAR COOKIE CONTROLS */}
+                    <div className="space-y-4">
+                      
+                      {/* Necessary Cookies */}
+                      <div className="p-4 rounded-xl border border-slate-900 bg-slate-900/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="space-y-1 max-w-xl">
+                          <div className="flex items-center space-x-2">
+                            <Check className="w-4 h-4 text-cyan-500" />
+                            <h4 
+                              className="text-xs font-bold text-slate-200 font-serif tracking-wide uppercase"
+                              style={{ fontFamily: 'Poppins, sans-serif' }}
+                            >
+                              {t.cookieSettings.essentialTitle}
+                            </h4>
+                          </div>
+                          <p className="text-[10px] text-slate-400 leading-relaxed">
+                            {t.cookieSettings.essentialDesc}
+                          </p>
+                        </div>
+                        <div className="shrink-0 flex items-center md:justify-end">
+                          <span className="text-[9px] font-mono font-bold text-cyan-400/90 bg-cyan-950/30 border border-cyan-900/40 px-2 py-1 rounded">
+                            {t.cookieSettings.statusAlwaysActive}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Analytics Cookies */}
+                      <div className="p-4 rounded-xl border border-slate-900 bg-slate-900/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="space-y-1 max-w-xl">
+                          <button 
+                            onClick={toggleAnalytics}
+                            className="flex items-center space-x-2 text-left hover:text-cyan-400 transition-colors focus:outline-none cursor-pointer"
+                          >
+                            {consent.analytics ? (
+                              <CheckSquare className="w-4 h-4 text-cyan-500" />
+                            ) : (
+                              <Square className="w-4 h-4 text-slate-500" />
+                            )}
+                            <h4 
+                              className="text-xs font-bold text-slate-200 font-serif tracking-wide uppercase hover:text-cyan-400 transition-colors"
+                              style={{ fontFamily: 'Poppins, sans-serif' }}
+                            >
+                              {t.cookieSettings.analyticsTitle}
+                            </h4>
+                          </button>
+                          <p className="text-[10px] text-slate-400 leading-relaxed">
+                            {t.cookieSettings.analyticsDesc}
+                          </p>
+                        </div>
+                        <div className="shrink-0 flex items-center md:justify-end space-x-2.5">
+                          <button
+                            onClick={toggleAnalytics}
+                            className={`w-11 h-6 rounded-full p-0.5 transition-colors cursor-pointer focus:outline-none ${
+                              consent.analytics ? 'bg-cyan-500' : 'bg-slate-800'
+                            }`}
+                          >
+                            <div
+                              className={`bg-slate-950 w-5 h-5 rounded-full shadow-md transform duration-200 ease-out flex items-center justify-center ${
+                                consent.analytics ? 'translate-x-5' : 'translate-x-0'
+                              }`}
+                            >
+                              {consent.analytics && <Check className="w-3 h-3 text-cyan-400" />}
+                            </div>
+                          </button>
+                          <span className={`text-[9px] font-mono font-bold w-40 text-left ${consent.analytics ? 'text-cyan-400/90' : 'text-slate-500'}`}>
+                            {consent.analytics ? t.cookieSettings.statusActive : t.cookieSettings.statusInactive}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Functional Cookies */}
+                      <div className="p-4 rounded-xl border border-slate-900 bg-slate-900/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="space-y-1 max-w-xl">
+                          <button 
+                            onClick={toggleFunctional}
+                            className="flex items-center space-x-2 text-left hover:text-cyan-400 transition-colors focus:outline-none cursor-pointer"
+                          >
+                            {consent.functional ? (
+                              <CheckSquare className="w-4 h-4 text-cyan-500" />
+                            ) : (
+                              <Square className="w-4 h-4 text-slate-500" />
+                            )}
+                            <h4 
+                              className="text-xs font-bold text-slate-200 font-serif tracking-wide uppercase hover:text-cyan-400 transition-colors"
+                              style={{ fontFamily: 'Poppins, sans-serif' }}
+                            >
+                              {t.cookieSettings.functionalTitle}
+                            </h4>
+                          </button>
+                          <p className="text-[10px] text-slate-400 leading-relaxed">
+                            {t.cookieSettings.functionalDesc}
+                          </p>
+                        </div>
+                        <div className="shrink-0 flex items-center md:justify-end space-x-2.5">
+                          <button
+                            onClick={toggleFunctional}
+                            className={`w-11 h-6 rounded-full p-0.5 transition-colors cursor-pointer focus:outline-none ${
+                              consent.functional ? 'bg-cyan-500' : 'bg-slate-800'
+                            }`}
+                          >
+                            <div
+                              className={`bg-slate-950 w-5 h-5 rounded-full shadow-md transform duration-200 ease-out flex items-center justify-center ${
+                                consent.functional ? 'translate-x-5' : 'translate-x-0'
+                              }`}
+                            >
+                              {consent.functional && <Check className="w-3 h-3 text-cyan-400" />}
+                            </div>
+                          </button>
+                          <span className={`text-[9px] font-mono font-bold w-40 text-left ${consent.functional ? 'text-cyan-400/90' : 'text-slate-500'}`}>
+                            {consent.functional ? t.cookieSettings.statusActive : t.cookieSettings.statusInactive}
+                          </span>
+                        </div>
+                      </div>
+
+                    </div>
+
+                    <hr className="border-slate-900 my-2" />
+
+                    {/* Standard Detailed Text */}
+                    <div className="space-y-4 max-w-none">
+                      {renderMarkdown(t.cookieContent)}
+                    </div>
+                  </div>
+                )}
+
+                {/* Tab 3: Terms of Service */}
+                {activeTab === 'terms' && (
+                  <div className="space-y-4 max-w-none">
+                    {renderMarkdown(t.termsContent)}
+                  </div>
+                )}
+
+              </div>
             </div>
 
-            {/* FOOTER ACTIONS - Poppins Uppercase */}
-            <div className="p-6 bg-slate-950 border-t border-slate-900 select-none shrink-0 flex flex-col sm:flex-row sm:justify-between items-center gap-3">
-              <button
-                onClick={onClose}
-                className="w-full sm:w-auto px-4 py-2 border border-slate-800 text-[10px] font-bold text-slate-400 hover:text-white rounded hover:bg-slate-900/50 transition-all cursor-pointer font-serif"
-                style={{ fontFamily: 'Poppins, sans-serif' }}
-              >
-                {t.buttons.close}
-              </button>
+            {/* FOOTER ACTIONS - Centered content wrapper */}
+            <div className="bg-slate-950 border-t border-slate-900 select-none shrink-0 py-5 px-6">
+              <div className="max-w-4xl mx-auto flex flex-col sm:flex-row sm:justify-between items-center gap-3">
+                <button
+                  onClick={onClose}
+                  className="w-full sm:w-auto px-5 py-2.5 border border-slate-800 text-[10px] font-bold text-slate-400 hover:text-white rounded hover:bg-slate-900/50 transition-all cursor-pointer font-serif uppercase tracking-wider"
+                  style={{ fontFamily: 'Poppins, sans-serif' }}
+                >
+                  {t.buttons.close}
+                </button>
 
-              <div className="w-full sm:w-auto flex flex-col sm:flex-row gap-2.5">
-                <button
-                  onClick={handleRejectAll}
-                  className="w-full sm:w-auto px-4 py-2 border border-cyan-900/40 bg-slate-900/30 text-slate-400 hover:text-slate-300 text-[10px] font-bold rounded hover:bg-slate-900/80 transition-all cursor-pointer font-serif"
-                  style={{ fontFamily: 'Poppins, sans-serif' }}
-                >
-                  {t.buttons.rejectAll}
-                </button>
-                <button
-                  onClick={handleSave}
-                  className="w-full sm:w-auto px-4 py-2 bg-slate-900 border border-slate-800 hover:border-cyan-500/50 text-cyan-400 text-[10px] font-bold rounded hover:bg-slate-900/80 transition-all cursor-pointer font-serif"
-                  style={{ fontFamily: 'Poppins, sans-serif' }}
-                >
-                  {t.buttons.savePreferences}
-                </button>
-                <button
-                  onClick={handleAcceptAll}
-                  className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-cyan-600 to-cyan-500 text-slate-950 font-bold text-[10px] rounded hover:from-cyan-500 hover:to-cyan-400 shadow-lg shadow-cyan-950/20 active:scale-95 transition-all cursor-pointer font-serif"
-                  style={{ fontFamily: 'Poppins, sans-serif' }}
-                >
-                  {t.buttons.acceptAll}
-                </button>
+                <div className="w-full sm:w-auto flex flex-col sm:flex-row gap-2.5">
+                  <button
+                    onClick={handleRejectAll}
+                    className="w-full sm:w-auto px-4 py-2.5 border border-cyan-900/40 bg-slate-900/30 text-slate-400 hover:text-slate-300 text-[10px] font-bold rounded hover:bg-slate-900/80 transition-all cursor-pointer font-serif uppercase tracking-wider"
+                    style={{ fontFamily: 'Poppins, sans-serif' }}
+                  >
+                    {t.buttons.rejectAll}
+                  </button>
+                  <button
+                    onClick={handleSave}
+                    className="w-full sm:w-auto px-4 py-2.5 bg-slate-900 border border-slate-800 hover:border-cyan-500/50 text-cyan-400 text-[10px] font-bold rounded hover:bg-slate-900/80 transition-all cursor-pointer font-serif uppercase tracking-wider"
+                    style={{ fontFamily: 'Poppins, sans-serif' }}
+                  >
+                    {t.buttons.savePreferences}
+                  </button>
+                  <button
+                    onClick={handleAcceptAll}
+                    className="w-full sm:w-auto px-5 py-2.5 bg-gradient-to-r from-cyan-600 to-cyan-500 text-slate-950 font-bold text-[10px] rounded hover:from-cyan-500 hover:to-cyan-400 shadow-lg shadow-cyan-950/20 active:scale-95 transition-all cursor-pointer font-serif uppercase tracking-wider"
+                    style={{ fontFamily: 'Poppins, sans-serif' }}
+                  >
+                    {t.buttons.acceptAll}
+                  </button>
+                </div>
               </div>
             </div>
 

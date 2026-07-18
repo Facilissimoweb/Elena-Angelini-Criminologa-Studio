@@ -113,6 +113,14 @@ export default function App() {
                 
                 {/* Embedded High Fidelity FORA widget on the home page */}
                 <Fora3D lang={lang} />
+
+                {/* Embedded FAQ section directly on the homepage */}
+                <div className="pt-6 border-t border-slate-900/40">
+                  <FAQ
+                    lang={lang}
+                    onNavigateToContact={() => handlePageChange('contatti')}
+                  />
+                </div>
               </div>
             )}
 
@@ -168,6 +176,7 @@ export default function App() {
           setLegalModalTab(tab);
           setLegalModalOpen(true);
         }}
+        onNavigate={handlePageChange}
       />
 
       {/* Booking Dialogue Popup */}

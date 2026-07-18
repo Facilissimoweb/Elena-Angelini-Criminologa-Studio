@@ -4,14 +4,15 @@ import { Language, translations } from '../types';
 interface FooterProps {
   lang: Language;
   onOpenLegal?: (tab: 'privacy' | 'cookie' | 'terms') => void;
+  onNavigate?: (page: 'home' | 'chi-siamo' | 'servizi' | 'punti-forza' | 'testimonianze' | 'contatti' | 'faq') => void;
 }
 
-export default function Footer({ lang, onOpenLegal }: FooterProps) {
+export default function Footer({ lang, onOpenLegal, onNavigate }: FooterProps) {
   const t = translations[lang];
 
   return (
-    <footer className="border-t border-slate-900 bg-cold-950 text-slate-500 py-10 px-4 text-center text-[10px] font-mono mt-12">
-      <div className="max-w-6xl mx-auto space-y-6">
+    <footer className="border-t border-slate-900 bg-cold-950 text-slate-500 py-12 px-6 text-center text-[10px] font-mono mt-12">
+      <div className="max-w-6xl mx-auto space-y-10">
         
         {/* Title */}
         <p className="text-slate-300 font-bold tracking-widest font-serif text-sm uppercase">
@@ -24,9 +25,142 @@ export default function Footer({ lang, onOpenLegal }: FooterProps) {
         </p>
 
         {/* VAT and copyright */}
-        <p className="text-slate-500">
+        <p className="text-slate-500 text-[9px]">
           &copy; {new Date().getFullYear()} Studio Criminalistica Elena Angelini. {lang === 'it' ? 'Tutti i diritti riservati' : 'All rights reserved'}. | P.IVA 01234567890
         </p>
+
+        {/* SITE MAP / MAPPA DEL SITO GRID */}
+        <div className="py-8 border-t border-b border-slate-900/30 text-left max-w-4xl mx-auto">
+          <div className="flex items-center space-x-1.5 text-cyan-500/80 font-bold uppercase tracking-widest text-[8px] mb-6 font-serif select-none justify-center md:justify-start">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" />
+            <span>{lang === 'it' ? 'MAPPA DEL SITO // SYSTEM SITE MAP' : 'SITE MAP // SYSTEM SITE MAP'}</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-6 font-sans">
+            {/* Column 1: Navigation */}
+            <div className="space-y-3">
+              <h4 className="text-[9px] font-bold tracking-widest text-slate-400 uppercase font-mono border-b border-slate-900/60 pb-1.5">
+                {lang === 'it' ? 'Navigazione Principale' : 'Main Navigation'}
+              </h4>
+              <ul className="space-y-2 text-[10px]">
+                <li>
+                  <button 
+                    onClick={() => onNavigate?.('home')}
+                    className="text-slate-500 hover:text-cyan-400 transition-colors cursor-pointer text-left focus:outline-none"
+                  >
+                    &raquo; {lang === 'it' ? 'Home Page (Studio & FORA)' : 'Home Page (Office & FORA)'}
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => onNavigate?.('chi-siamo')}
+                    className="text-slate-500 hover:text-cyan-400 transition-colors cursor-pointer text-left focus:outline-none"
+                  >
+                    &raquo; {lang === 'it' ? 'Chi Siamo' : 'About Us'}
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => onNavigate?.('punti-forza')}
+                    className="text-slate-500 hover:text-cyan-400 transition-colors cursor-pointer text-left focus:outline-none"
+                  >
+                    &raquo; {lang === 'it' ? 'Punti di Forza' : 'Strengths'}
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => onNavigate?.('testimonianze')}
+                    className="text-slate-500 hover:text-cyan-400 transition-colors cursor-pointer text-left focus:outline-none"
+                  >
+                    &raquo; {lang === 'it' ? 'Testimonianze & Casi' : 'Testimonials & Cases'}
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 2: Forensic Services */}
+            <div className="space-y-3">
+              <h4 className="text-[9px] font-bold tracking-widest text-slate-400 uppercase font-mono border-b border-slate-900/60 pb-1.5">
+                {lang === 'it' ? 'Servizi di Criminalistica' : 'Forensic Services'}
+              </h4>
+              <ul className="space-y-2 text-[10px]">
+                <li>
+                  <button 
+                    onClick={() => onNavigate?.('servizi')}
+                    className="text-slate-500 hover:text-cyan-400 transition-colors cursor-pointer text-left focus:outline-none"
+                  >
+                    &raquo; {lang === 'it' ? 'Grafologia Forense' : 'Forensic Graphology'}
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => onNavigate?.('servizi')}
+                    className="text-slate-500 hover:text-cyan-400 transition-colors cursor-pointer text-left focus:outline-none"
+                  >
+                    &raquo; {lang === 'it' ? 'Analisi Documentale' : 'Document Analysis'}
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => onNavigate?.('servizi')}
+                    className="text-slate-500 hover:text-cyan-400 transition-colors cursor-pointer text-left focus:outline-none"
+                  >
+                    &raquo; {lang === 'it' ? 'Consulenza Grafologica' : 'Graphological Assessment'}
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => onNavigate?.('servizi')}
+                    className="text-slate-500 hover:text-cyan-400 transition-colors cursor-pointer text-left focus:outline-none"
+                  >
+                    &raquo; {lang === 'it' ? 'Perizie e Pareri Tecnici' : 'Expert Witness Opinions'}
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 3: Resources & Legals */}
+            <div className="space-y-3">
+              <h4 className="text-[9px] font-bold tracking-widest text-slate-400 uppercase font-mono border-b border-slate-900/60 pb-1.5">
+                {lang === 'it' ? 'Supporto e Legale' : 'Resources & Legal'}
+              </h4>
+              <ul className="space-y-2 text-[10px]">
+                <li>
+                  <button 
+                    onClick={() => onNavigate?.('contatti')}
+                    className="text-slate-500 hover:text-cyan-400 transition-colors cursor-pointer text-left focus:outline-none"
+                  >
+                    &raquo; {lang === 'it' ? 'Contattaci (Prenota Studio)' : 'Contact Us (Book Session)'}
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => onNavigate?.('faq')}
+                    className="text-slate-500 hover:text-cyan-400 transition-colors cursor-pointer text-left focus:outline-none"
+                  >
+                    &raquo; {lang === 'it' ? 'Domande Frequenti (FAQ)' : 'Frequently Asked Questions (FAQ)'}
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => onOpenLegal?.('privacy')}
+                    className="text-slate-500 hover:text-cyan-400 transition-colors cursor-pointer text-left focus:outline-none"
+                  >
+                    &raquo; {lang === 'it' ? 'Informativa sulla Privacy' : 'Privacy Policy Info'}
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => onOpenLegal?.('cookie')}
+                    className="text-slate-500 hover:text-cyan-400 transition-colors cursor-pointer text-left focus:outline-none"
+                  >
+                    &raquo; {lang === 'it' ? 'Configura Preferenze Cookie' : 'Manage Cookie Consent'}
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
 
         {/* Professional Secrecy Shield Block */}
         <div className="max-w-xl mx-auto p-4 bg-slate-950 border border-slate-900/80 rounded-xl space-y-2 text-left">
