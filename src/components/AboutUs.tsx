@@ -18,11 +18,14 @@ import {
   Brain, 
   Building, 
   FileCheck2,
-  Lock
+  Lock,
+  FileDown,
+  Loader2
 } from 'lucide-react';
 import { Language } from '../types';
 import { motion } from 'motion/react';
 import ForensicTimeline from './ForensicTimeline';
+import { jsPDF } from 'jspdf';
 
 interface AboutUsProps {
   lang: Language;
@@ -116,7 +119,9 @@ const localTranslations: Record<string, any> = {
     callUs: "Chiamaci",
     confidentiality: "Massima Riservatezza Garantita",
     slogan: "La Scienza Forense al vostro servizio",
-    ctaBtn: "Richiedi Valutazione Gratuita"
+    ctaBtn: "Richiedi Valutazione Gratuita",
+    pdfBtn: "Scarica Profilo PDF",
+    pdfGenerating: "Generazione PDF..."
   },
   
   // Standard elegant English fallback with complete fidelity to user's text
@@ -198,13 +203,192 @@ const localTranslations: Record<string, any> = {
     callUs: "Call Us",
     confidentiality: "Maximum Confidentiality Guaranteed",
     slogan: "Forensic Science at your service",
-    ctaBtn: "Request Free Assessment"
+    ctaBtn: "Request Free Assessment",
+    pdfBtn: "Download PDF Profile",
+    pdfGenerating: "Generating PDF..."
   }
 };
 
 export default function AboutUs({ lang, onNavigateToContact }: AboutUsProps) {
   // Use translations fallback gracefully
   const t = localTranslations[lang] || localTranslations['it'];
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+
+  const handleDownloadPDF = async () => {
+    setIsGeneratingPDF(true);
+    // Short delay to simulate compilation / loading feedback state for top-tier feeling
+    await new Promise((resolve) => setTimeout(resolve, 800));
+
+    try {
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      let y = 15;
+      const isIt = lang === 'it' || !lang;
+
+      // Header Banner
+      doc.setFillColor(15, 23, 42); // slate-900
+      doc.rect(0, 0, 210, 42, 'F');
+
+      // Title in the banner
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(20);
+      doc.text("STUDIO CRIMINALISTICA ELENA ANGELINI", 20, 18);
+      
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(11);
+      doc.setTextColor(103, 232, 249); // Cyan-300
+      doc.text(isIt ? "Criminologia, Criminalistica & Scienze Forensi" : "Criminology, Criminalistics & Forensic Sciences", 20, 25);
+      
+      doc.setFontSize(9);
+      doc.setTextColor(148, 163, 184); // Slate-400
+      doc.text(isIt ? "La Scienza Forense al vostro servizio // Massima Riservatezza" : "Forensic Science at your service // Maximum Confidentiality", 20, 31);
+
+      doc.setFillColor(6, 182, 212); // Cyan line decoration
+      doc.rect(0, 41, 210, 1, 'F');
+
+      // Resume vertical coordinate
+      y = 52;
+
+      // Function to add a section heading
+      const addHeading = (text: string) => {
+        if (y > 240) {
+          doc.addPage();
+          y = 20;
+        }
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(12);
+        doc.setTextColor(15, 23, 42); // slate-900
+        doc.text(text.toUpperCase(), 20, y);
+        y += 3;
+        doc.setDrawColor(6, 182, 212); // Cyan accent line
+        doc.setLineWidth(0.4);
+        doc.line(20, y, 190, y);
+        y += 6;
+      };
+
+      // Function to add wrapped body text
+      const addParagraph = (text: string, fontSize = 9.5, isBold = false) => {
+        if (y > 255) {
+          doc.addPage();
+          y = 20;
+        }
+        doc.setFont('helvetica', isBold ? 'bold' : 'normal');
+        doc.setFontSize(fontSize);
+        doc.setTextColor(51, 65, 85); // Slate-700
+        const lines = doc.splitTextToSize(text, 170);
+        doc.text(lines, 20, y);
+        y += (lines.length * (fontSize * 0.45)) + 4;
+      };
+
+      // 1. Overview
+      addHeading(isIt ? "Profilo Studio & Titolare" : "Studio & Director Profile");
+      addParagraph(isIt 
+        ? "Elena Angelini: Criminologa e Criminalista professionista d'eccellenza, specializzata nell'analisi e revisione scientifica di casi penali e civili complessi." 
+        : "Elena Angelini: Elite Criminologist and Forensic Criminalist specializing in the scientific audit and review of complex criminal and civil cases.", 9.5, true);
+      addParagraph(isIt
+        ? "Lo Studio si impone come punto di riferimento oggettivo ed empirico nel campo forense nazionale, offrendo consulenze tecniche di parte (CTP) integrate e personalizzate."
+        : "The Studio stands out as an objective, empirical reference point in the national forensic field, offering fully integrated and tailored party expert witness services.", 9.5);
+      y += 3;
+
+      // 2. Credentials
+      addHeading(isIt ? "Credenziali & Iscrizioni Nazionali" : "Credentials & National Memberships");
+      addParagraph(isIt 
+        ? "• Professionista ex Legge 4/2013: Attestato di qualità e conformità metodologica delle prestazioni professionali." 
+        : "• Practitioner in compliance with Italian Law No. 4/2013 for unchartered elite professions.", 9, true);
+      addParagraph(isIt 
+        ? "• Socio Professionista A.I.C.I.S. n. 208 (Associazione Italiana Criminologia per l'Investigazione e la Sicurezza)" 
+        : "• Professional Member of A.I.C.I.S. No. 208 (Italian Criminology Association for Investigation & Security)", 9);
+      addParagraph(isIt 
+        ? "• Socio So.I.S. n. 2670 (Società Italiana di Sociologia) con rilascio del certificato n. 145/2015" 
+        : "• Certified Member of So.I.S. No. 2670 (Italian Sociological Society) with certified qualification No. 145/2015", 9);
+      addParagraph(isIt 
+        ? "• Socio Professionale A.S.I. n. 338" 
+        : "• Registered Member of A.S.I. No. 338", 9);
+      y += 3;
+
+      // 3. Methodology
+      addHeading(isIt ? "Metodologia Operativa: Il Pool a Task Force" : "Operational Methodology: The Task Force Pool");
+      addParagraph(isIt
+        ? "Rifiutando l'approccio generico, lo Studio applica il metodo a 'Task Force': per ogni caso viene istituito un pool di esperti d'élite su misura (genetisti forensi, balistici, medici legali, psicologi e informatici forensi) coordinati sinergicamente per massimizzare il potenziale probatorio difensivo."
+        : "Rejecting any generic approach, our Studio implements the 'Task Force' model: assembling a custom-tailored pool of elite forensic experts (geneticists, ballistics specialists, medical examiners, psychologists, and IT forensics) working together to maximize defensive evidence power.", 9.5);
+      y += 3;
+
+      // 4. Core Services
+      addHeading(isIt ? "Principali Servizi Specialistici" : "Core Specialized Services");
+      addParagraph(isIt 
+        ? "• Consulenza Criminologica & Criminalistica per la difesa penale e parte civile." 
+        : "• Forensic Criminological & Criminalistic expert consultations for defense & civil actions.", 9, true);
+      addParagraph(isIt 
+        ? "• Analisi tecnica della catena di custodia, dei verbali d'indagine e dei reperti biologici/DNA." 
+        : "• Scientific review of chain of custody, investigation reports, and biological/DNA evidence.", 9);
+      addParagraph(isIt 
+        ? "• Verifica e ricostruzione cinematica tridimensionale degli scenari del crimine." 
+        : "• 3D crime scene mapping, verification, and kinematic physical reconstruction.", 9);
+      addParagraph(isIt 
+        ? "• Valutazione scientifica dell'attendibilità testimoniale e vittimologia forense." 
+        : "• Credibility assessment of witness statements and forensic victimology.", 9);
+      addParagraph(isIt 
+        ? "• Presidio tecnico strategico durante accertamenti irripetibili guidati dall'Autorità Giudiziaria." 
+        : "• Strategic technical defense presence during non-repeatable state-conducted forensic tests.", 9);
+      y += 3;
+
+      // 5. Team Network
+      addHeading(isIt ? "Il Network di Specialisti Abilitati" : "The Network of Accredited Experts");
+      const list = isIt ? [
+        "1. Criminologi Specializzati (Profili e Criminologia Clinica)",
+        "2. Esperti di Scena del Crimine (Sopralluoghi e Bloodstain Pattern Analysis)",
+        "3. Medici Legali, Tossicologi e Psichiatri Forensi",
+        "4. Psicologi e Psicodiagnosti Clinici",
+        "5. Investigatori Privati autorizzati alle indagini difensive (Art. 391-bis c.p.p.)",
+        "6. Avvocati Penalisti, Civilisti e di Diritto di Famiglia"
+      ] : [
+        "1. Specialized Criminologists (Profiling and Clinical Criminology)",
+        "2. Crime Scene Experts (Scene Auditing and Bloodstain Pattern Analysis)",
+        "3. Medical Examiners, Toxicologists, and Forensic Psychiatrists",
+        "4. Clinical Psychologists and Psychodiagnosticians",
+        "5. Licensed Private Investigators for Defense Investigations (Art. 391-bis c.p.p.)",
+        "6. Criminal, Civil, and Family Law Trial Attorneys"
+      ];
+      list.forEach(item => addParagraph(item, 8.5));
+      y += 3;
+
+      // 6. Contact & Offices
+      addHeading(isIt ? "Contatti & Sede Principale" : "Contact & Main Headquarters");
+      addParagraph(isIt
+        ? "Sede: Arbor Vitae, Via Fabio Filzi 9 - 47923 Rimini, ITALY"
+        : "Headquarters: Arbor Vitae, Via Fabio Filzi 9 - 47923 Rimini, ITALY", 9.5, true);
+      addParagraph(isIt
+        ? "Orari: Lunedì - Venerdì (Solo su appuntamento riservato)"
+        : "Hours: Monday - Friday (By private appointment only)", 9);
+      addParagraph("Email: info@studiocriminalistica.it  |  Web: www.studiocriminalistica.it", 9);
+      addParagraph("Tel: +39 366 1236464  |  Presidio Emergenze Forensi Attivo", 9);
+
+      // Add footers on all pages
+      const pageCount = doc.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setDrawColor(226, 232, 240); // slate-200
+        doc.setLineWidth(0.3);
+        doc.line(20, 282, 190, 282);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.setTextColor(148, 163, 184); // slate-400
+        doc.text(isIt ? "DOCUMENTO RISERVATO // STUDIO CRIMINALISTICA ELENA ANGELINI" : "STRICTLY CONFIDENTIAL // ELENA ANGELINI FORENSIC STUDIO", 20, 287);
+        doc.text(`Page ${i} of ${pageCount}`, 175, 287);
+      }
+
+      doc.save(`Elena_Angelini_Studio_Criminalistica_Profile_${lang}.pdf`);
+    } catch (err) {
+      console.error("Failed to generate PDF:", err);
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
 
   return (
     <div className="space-y-16 py-6" id="chi-siamo-page-root">
@@ -233,6 +417,31 @@ export default function AboutUs({ lang, onNavigateToContact }: AboutUsProps) {
           <p className="text-sm md:text-base text-slate-300 leading-relaxed max-w-3xl">
             {t.introText} <strong className="text-cold-300">{t.subtitle}</strong>
           </p>
+
+          <div className="flex flex-wrap items-center gap-3 pt-2">
+            <button
+              onClick={handleDownloadPDF}
+              disabled={isGeneratingPDF}
+              className={`px-4 py-2.5 rounded font-mono text-xs font-bold transition-all flex items-center space-x-2 shadow-md hover:shadow-cyan-500/10 active:scale-95 cursor-pointer border ${
+                isGeneratingPDF 
+                  ? 'bg-slate-900 border-slate-800 text-slate-500 cursor-not-allowed' 
+                  : 'bg-cyan-500/10 hover:bg-cyan-500/15 text-cyan-400 border-cyan-500/30 hover:border-cyan-500/50'
+              }`}
+              title={t.pdfBtn}
+            >
+              {isGeneratingPDF ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin text-cyan-400" />
+                  <span className="animate-pulse">{t.pdfGenerating}</span>
+                </>
+              ) : (
+                <>
+                  <FileDown className="w-4 h-4 text-cyan-400" />
+                  <span>{t.pdfBtn}</span>
+                </>
+              )}
+            </button>
+          </div>
 
           {/* Embedded High-Quality Forensic Imagery */}
           <div className="mt-8 rounded-lg overflow-hidden border border-slate-800/60 shadow-lg relative max-w-3xl">
