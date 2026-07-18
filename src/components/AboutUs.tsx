@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { Language } from '../types';
 import { motion } from 'motion/react';
+import ForensicTimeline from './ForensicTimeline';
 
 interface AboutUsProps {
   lang: Language;
@@ -344,6 +345,9 @@ export default function AboutUs({ lang, onNavigateToContact }: AboutUsProps) {
         </div>
       </section>
 
+      {/* INTERACTIVE FORENSIC TIMELINE SECTION */}
+      <ForensicTimeline lang={lang} />
+
       {/* SECTION 4: THE NETWORK (GRID OF ACCREDITED PROFESSIONALS) */}
       <section className="rounded-xl border border-slate-900/60 bg-slate-950/80 p-6 md:p-8 space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -365,13 +369,40 @@ export default function AboutUs({ lang, onNavigateToContact }: AboutUsProps) {
           {t.networkProfessions.map((prof: any, idx: number) => {
             // Assign custom matching icons for each profile
             let IconComp = CheckCircle2;
-            if (idx === 0) IconComp = Fingerprint;
-            if (idx === 1) IconComp = Search;
-            if (idx === 2) IconComp = FileText;
-            if (idx === 3) IconComp = Brain;
-            if (idx === 4) IconComp = Shield;
-            if (idx === 5) IconComp = Scale;
-            if (idx === 6) IconComp = Building;
+            let badgeText = '';
+            let badgeStyles = '';
+
+            const isIt = lang === 'it' || !lang;
+
+            if (idx === 0) {
+              IconComp = Fingerprint;
+              badgeText = isIt ? 'Criminologia' : 'Criminology';
+              badgeStyles = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
+            } else if (idx === 1) {
+              IconComp = Search;
+              badgeText = isIt ? 'Criminalistica' : 'Criminalistics';
+              badgeStyles = 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30';
+            } else if (idx === 2) {
+              IconComp = FileText;
+              badgeText = isIt ? 'Medicina Forense' : 'Forensic Medicine';
+              badgeStyles = 'bg-rose-500/10 text-rose-400 border-rose-500/30';
+            } else if (idx === 3) {
+              IconComp = Brain;
+              badgeText = isIt ? 'Psicologia' : 'Psychology';
+              badgeStyles = 'bg-purple-500/10 text-purple-400 border-purple-500/30';
+            } else if (idx === 4) {
+              IconComp = Shield;
+              badgeText = isIt ? 'Investigazione' : 'Investigation';
+              badgeStyles = 'bg-blue-500/10 text-blue-400 border-blue-500/30';
+            } else if (idx === 5) {
+              IconComp = Scale;
+              badgeText = isIt ? 'Area Legale' : 'Legal Area';
+              badgeStyles = 'bg-amber-500/10 text-amber-400 border-amber-500/30';
+            } else if (idx === 6) {
+              IconComp = Building;
+              badgeText = isIt ? 'Sociologia' : 'Sociology';
+              badgeStyles = 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30';
+            }
 
             return (
               <div 
@@ -381,11 +412,18 @@ export default function AboutUs({ lang, onNavigateToContact }: AboutUsProps) {
                 <div className="p-2.5 h-10 w-10 flex items-center justify-center rounded bg-slate-900 border border-slate-800 text-cyan-400/90 flex-shrink-0">
                   <IconComp className="w-4 h-4" />
                 </div>
-                <div className="text-left">
-                  <h4 className="text-xs md:text-sm font-bold text-slate-200 uppercase tracking-wide">
-                    {prof.text}
-                  </h4>
-                  <p className="text-[11px] text-slate-400 mt-1 leading-snug">
+                <div className="text-left flex-1">
+                  <div className="flex flex-wrap items-center gap-2 mb-1">
+                    <h4 className="text-xs md:text-sm font-bold text-slate-200 uppercase tracking-wide">
+                      {prof.text}
+                    </h4>
+                    {badgeText && (
+                      <span className={`px-1.5 py-0.5 text-[8px] font-mono font-semibold rounded border tracking-wider uppercase ${badgeStyles}`}>
+                        {badgeText}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-slate-400 leading-snug">
                     {prof.detail}
                   </p>
                 </div>

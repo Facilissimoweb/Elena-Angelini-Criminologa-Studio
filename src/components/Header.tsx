@@ -1,7 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Menu, X, Globe } from 'lucide-react';
 import { Language, PageId, translations, languagesList } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
+
+const languageFlags: Record<Language, string> = {
+  it: '🇮🇹',
+  en: '🇬🇧',
+  es: '🇪🇸',
+  fr: '🇫🇷',
+  de: '🇩🇪',
+  pt: '🇵🇹',
+  ro: '🇷🇴',
+  nl: '🇳🇱',
+  pl: '🇵🇱',
+  tr: '🇹🇷',
+  sq: '🇦🇱',
+  ru: '🇷🇺',
+  zh: '🇨🇳',
+  ja: '🇯🇵',
+  ar: '🇸🇦',
+  hi: '🇮🇳'
+};
 
 interface HeaderProps {
   lang: Language;
@@ -19,7 +38,34 @@ export default function Header({
   openBooking,
 }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const t = translations[lang];
+
+  useEffect(() => {
+    // Sync Google Translate with active language
+    const syncTranslate = () => {
+      try {
+        const selectEl = document.querySelector('.goog-te-combo') as HTMLSelectElement;
+        if (selectEl) {
+          selectEl.value = lang;
+          selectEl.dispatchEvent(new Event('change'));
+        }
+      } catch (e) {
+        console.warn('Google Translate sync pending...', e);
+      }
+    };
+
+    syncTranslate();
+    const timer1 = setTimeout(syncTranslate, 400);
+    const timer2 = setTimeout(syncTranslate, 1200);
+    const timer3 = setTimeout(syncTranslate, 2500);
+
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+    };
+  }, [lang]);
 
   const menuItems: { id: PageId; labelKey: keyof typeof translations.it }[] = [
     { id: 'home', labelKey: 'nav-home' },
@@ -95,22 +141,56 @@ export default function Header({
 
         {/* CONTROLS */}
         <div className="flex items-center space-x-3">
-          {/* 16-Language Dropdown Selector */}
-          <div className="relative flex items-center bg-slate-900/30 border border-slate-800 rounded px-2 py-1.5 hover:border-cold-500/50 transition-all text-slate-200">
-            <Globe className="w-3.5 h-3.5 text-cold-400 mr-1.5 flex-shrink-0" />
-            <select
-              value={lang}
-              onChange={(e) => setLang(e.target.value as Language)}
-              id="language-select-dropdown"
-              className="bg-transparent text-slate-100 text-[11px] font-mono font-bold focus:outline-none cursor-pointer pr-1 appearance-none py-0.5 border-none"
-              style={{ colorScheme: 'dark' }}
+          {/* Drastically reduced Flag-Only Language Selector */}
+          <div className="relative">
+            {langDropdownOpen && (
+              <div 
+                className="fixed inset-0 z-40 bg-transparent" 
+                onClick={() => setLangDropdownOpen(false)}
+              />
+            )}
+            <button
+              onClick={() => setLangDropdownOpen(!langDropdownOpen)}
+              id="flag-language-picker-trigger"
+              className="relative z-50 flex items-center justify-center w-7 h-7 rounded-full bg-slate-900 border border-slate-800 hover:border-cold-500/80 hover:bg-slate-800/50 transition-all text-sm shadow-md active:scale-95 focus:outline-none cursor-pointer"
+              title="Change Language // Cambia Lingua"
             >
-              {languagesList.map((l) => (
-                <option key={l.code} value={l.code} className="bg-slate-950 text-slate-100 text-xs">
-                  {l.name}
-                </option>
-              ))}
-            </select>
+              <span>{languageFlags[lang] || '🇮🇹'}</span>
+            </button>
+
+            <AnimatePresence>
+              {langDropdownOpen && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: -5 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: -5 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute right-0 mt-2 z-50 bg-slate-950/95 backdrop-blur-md border border-slate-900/60 p-2 rounded-lg shadow-2xl w-44"
+                  id="flag-dropdown-panel"
+                >
+                  <div className="grid grid-cols-4 gap-1.5 justify-items-center">
+                    {languagesList.map((l) => {
+                      const isSelected = lang === l.code;
+                      return (
+                        <button
+                          key={l.code}
+                          onClick={() => {
+                            setLang(l.code);
+                            setLangDropdownOpen(false);
+                          }}
+                          className={`flex items-center justify-center w-8 h-8 text-base rounded transition-all hover:bg-cold-500/20 hover:scale-115 active:scale-90 cursor-pointer ${
+                            isSelected ? 'bg-cyan-500/15 border border-cyan-500/40' : 'border border-transparent'
+                          }`}
+                          title={l.name}
+                        >
+                          <span>{languageFlags[l.code] || '🇮🇹'}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Desktop CTA */}
