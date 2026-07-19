@@ -144,8 +144,8 @@ export default function Header({
           </div>
         </button>
 
-        {/* DESKTOP NAV */}
-        <nav className="hidden lg:flex items-center space-x-7 text-[11px] font-bold uppercase tracking-wider">
+        {/* DESKTOP NAV - Unified under the elegant dropdown menu containing page titles and translations */}
+        <nav className="hidden items-center space-x-7 text-[11px] font-bold uppercase tracking-wider">
           {menuItems.map((item) => {
             const isActive = currentPage === item.id;
             return (
@@ -167,12 +167,6 @@ export default function Header({
 
         {/* CONTROLS */}
         <div className="flex items-center space-x-3">
-          <LanguageSwitcher onLanguageChangeExternal={(langCode) => {
-            // Map 'zh-CN' from Google language back to 'zh' if necessary
-            const appCode = langCode === 'zh-CN' ? 'zh' : langCode;
-            setLang(appCode as Language);
-          }} />
-
           {/* Desktop CTA */}
           <button
             onClick={openBooking}
@@ -182,11 +176,11 @@ export default function Header({
             {t['cta-header']}
           </button>
 
-          {/* Mobile Hamburger menu trigger */}
+          {/* Hamburger menu trigger (visible on all screens to house page titles and translations) */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             id="mobile-hamburger-trigger"
-            className="lg:hidden p-2 text-slate-400 hover:text-cold-400 transition-colors focus:outline-none"
+            className="p-2 text-slate-400 hover:text-cold-400 transition-colors focus:outline-none"
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -194,7 +188,7 @@ export default function Header({
         </div>
       </div>
 
-      {/* MOBILE DRAWER */}
+      {/* DROPDOWN MENU / DRAWER */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -202,11 +196,11 @@ export default function Header({
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25, ease: 'easeInOut' }}
-            className="lg:hidden bg-cold-950/98 border-t border-slate-900 overflow-hidden"
+            className="bg-cold-950/98 border-t border-slate-900 overflow-hidden"
             id="mobile-drawer-container"
           >
-            <div className="px-6 py-6 space-y-5 flex flex-col">
-              <nav className="flex flex-col space-y-4 text-xs font-mono font-bold uppercase tracking-widest text-slate-300">
+            <div className="max-w-6xl mx-auto w-full px-6 py-5 space-y-4 flex flex-col">
+              <nav className="flex flex-col space-y-1.5 text-sm font-poppins font-medium uppercase tracking-wider text-slate-300">
                 {menuItems.map((item) => {
                   const isActive = currentPage === item.id;
                   return (
@@ -214,8 +208,8 @@ export default function Header({
                       key={item.id}
                       id={`mobile-nav-${item.id}`}
                       onClick={() => handleNav(item.id)}
-                      className={`text-left py-2.5 border-b border-slate-900/60 ${
-                        isActive ? 'text-cold-400 font-bold' : 'text-slate-400'
+                      className={`text-left py-1.5 border-b border-slate-900/40 transition-colors duration-150 ${
+                        isActive ? 'text-cold-400 font-bold' : 'text-slate-400 hover:text-slate-200'
                       }`}
                     >
                       {t[item.labelKey]}
@@ -223,6 +217,18 @@ export default function Header({
                   );
                 })}
               </nav>
+
+              {/* TRANSLATION SWITCHER INSERTED EXCLUSIVELY HERE */}
+              <div className="py-2.5 border-b border-slate-900/40 flex items-center justify-between">
+                <span className="text-xs font-poppins font-medium uppercase tracking-wider text-slate-400">
+                  {lang === 'it' ? 'Seleziona Lingua' : 'Select Language'}
+                </span>
+                <LanguageSwitcher onLanguageChangeExternal={(langCode) => {
+                  const appCode = langCode === 'zh-CN' ? 'zh' : langCode;
+                  setLang(appCode as Language);
+                }} />
+              </div>
+
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);

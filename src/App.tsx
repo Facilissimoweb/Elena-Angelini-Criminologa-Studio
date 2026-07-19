@@ -169,6 +169,7 @@ export default function App() {
               <FAQ
                 lang={lang}
                 onNavigateToContact={() => handlePageChange('contatti')}
+                isGenericOnly={true}
               />
             )}
 

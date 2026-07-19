@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'motion/react';
 interface FAQProps {
   lang: Language;
   onNavigateToContact: () => void;
+  isGenericOnly?: boolean;
 }
 
 interface FAQItem {
@@ -90,7 +91,70 @@ const faqData: FAQItem[] = [
   }
 ];
 
-export default function FAQ({ lang, onNavigateToContact }: FAQProps) {
+const genericServicesFaqData: FAQItem[] = [
+  {
+    id: 'g0',
+    category: { it: 'Grafologia Forense', en: 'Forensic Graphology' },
+    question: {
+      it: "In cosa consiste l'esame grafologico e quando si applica?",
+      en: "What does forensic handwriting analysis consist of and when is it applied?"
+    },
+    answer: {
+      it: "L'indagine grafologica forense è volta ad accertare l'autenticità o l'apocrifia di scritti, in particolare testamenti olografi, firme su contratti, assegni, scritture private o lettere anonime. L'esame viene svolto attraverso un attento confronto microscopico e strumentale tra lo scritto in verifica e le scritture di comparazione idonee, valutando parametri quali pressione, ritmo, velocità e dinamismo grafico.",
+      en: "Forensic graphological analysis is designed to verify the authenticity or forgery of handwritten documents, particularly holographic wills, signatures on contracts, checks, or anonymous letters. The investigation is conducted via microscopical and optical comparison between the questioned writing and suitable comparative samples, analyzing pressure, rhythm, speed, and graphic dynamism."
+    }
+  },
+  {
+    id: 'g1',
+    category: { it: 'Analisi Documentale', en: 'Document Analysis' },
+    question: {
+      it: "Cos'è l'analisi documentale forense e quali alterazioni rileva?",
+      en: "What is forensic document analysis and what types of alterations does it detect?"
+    },
+    answer: {
+      it: "L'analisi documentale forense (o analisi dei falsi materiali) serve a verificare se un documento, sia esso un contratto, una cambiale o un documento d'identità, sia stato alterato o falsificato. Lo studio analizza il tipo di supporto cartaceo, la natura degli inchiostri (mediante esami all'infrarosso e all'ultravioletto), la presenza di abrasioni, cancellature fisiche o chimiche, e se vi siano state aggiunte o interpolazioni successive di testo.",
+      en: "Forensic document analysis (or material forgery analysis) verifies whether documents like contracts, promissory notes, or ID documents have been altered or forged. We analyze the paper substrate, ink compositions (using infrared and ultraviolet spectroscopy), physical or chemical erasures, and subsequent text interpolations or additions."
+    }
+  },
+  {
+    id: 'g2',
+    category: { it: 'Criminalistica & 3D', en: 'Criminalistics & 3D' },
+    question: {
+      it: "Come funziona la ricostruzione balistica e cinematica 3D?",
+      en: "How does 3D ballistic and kinematic event reconstruction work?"
+    },
+    answer: {
+      it: "Attraverso il rilievo laser e l'utilizzo della piattaforma scientifica open-source FORA (Forensic Open Reconstruction), ricostruiamo virtualmente tridimensionalmente la dinamica di reato o incidenti. Questo ci consente di calcolare con precisione millimetrica traiettorie di sparo, zone d'origine, angoli di impatto, visibilità dei soggetti e dinamiche d'urto nei sinistri stradali, traducendo dati complessi in simulazioni chiare e inoppugnabili.",
+      en: "Using precise laser measurements and our scientific open-source FORA platform, we virtually reconstruct the 3D dynamics of crimes or accidents. This allows us to calculate bullet trajectories, point of origin, impact angles, line-of-sight visibility, and collision dynamics in traffic accidents with millimeter-level precision, translating complex forensic data into clear and irrefutable simulations."
+    }
+  },
+  {
+    id: 'g3',
+    category: { it: 'Criminologia Clinica', en: 'Clinical Criminology' },
+    question: {
+      it: "Quali servizi rientrano nell'ambito della criminologia clinica e vittimologia?",
+      en: "What services fall under clinical criminology and victimology?"
+    },
+    answer: {
+      it: "Lo Studio offre consulenza per la valutazione del danno psichico, profili di mobbing lavorativo, stalking, e la stesura di autopsie psicologiche nei casi di morti equivoche. Attraverso l'analisi della vittimologia e del comportamento, forniamo pareri tecnici volti a comprendere lo stato mentale o l'esposizione a dinamiche persecutorie del soggetto, sia in ambito civile che penale.",
+      en: "We provide expert advice for psychological harm assessments, workplace harassment (mobbing) profiles, stalking situations, and psychological autopsies in equivocal deaths. By analyzing victimology and behavioral evidence, we offer technical assessments designed to clarify a subject's mental state or exposure to harassment patterns for civil or criminal defense."
+    }
+  },
+  {
+    id: 'g4',
+    category: { it: 'Genetica & BPA', en: 'Genetics & BPA' },
+    question: {
+      it: "Cos'è la Bloodstain Pattern Analysis (BPA) e come supporta la difesa?",
+      en: "What is Bloodstain Pattern Analysis (BPA) and how does it support the defense?"
+    },
+    answer: {
+      it: "La BPA è lo studio scientifico della forma, dimensione, distribuzione e posizione delle tracce ematiche sulla scena del crimine. Questa analisi fisica e geometrica consente di determinare l'origine delle macchie, la direzione delle forze applicate, il tipo di arma o azione che ha causato il sanguinamento e la posizione di vittima ed aggressore durante l'evento, offrendo un riscontro oggettivo alla ricostruzione dei fatti.",
+      en: "BPA is the scientific study of the shape, size, distribution, and location of bloodstains at a crime scene. This physical and geometric analysis determines the origin of blood droplets, the direction of forces applied, the type of weapon or action that caused the bleeding, and the relative positions of the victim and assailant during the event, providing objective feedback to crime reconstructions."
+    }
+  }
+];
+
+export default function FAQ({ lang, onNavigateToContact, isGenericOnly = false }: FAQProps) {
   const t = translations[lang];
   const [searchQuery, setSearchQuery] = useState('');
   const [openId, setOpenId] = useState<string | null>(null);
@@ -99,7 +163,9 @@ export default function FAQ({ lang, onNavigateToContact }: FAQProps) {
     setOpenId(openId === id ? null : id);
   };
 
-  const filteredFaqs = faqData.filter((item) => {
+  const faqSource = isGenericOnly ? genericServicesFaqData : faqData;
+
+  const filteredFaqs = faqSource.filter((item) => {
     const qText = item.question[lang === 'it' ? 'it' : 'en'].toLowerCase();
     const aText = item.answer[lang === 'it' ? 'it' : 'en'].toLowerCase();
     const cText = item.category[lang === 'it' ? 'it' : 'en'].toLowerCase();
@@ -117,12 +183,18 @@ export default function FAQ({ lang, onNavigateToContact }: FAQProps) {
           <span>// {t['nav-faq'] || 'FAQ'}</span>
         </div>
         <h3 className="text-3xl md:text-4xl font-bold font-serif text-slate-100">
-          {lang === 'it' ? 'Domande Frequenti Forensi' : 'Forensic Frequently Asked Questions'}
+          {isGenericOnly 
+            ? (lang === 'it' ? 'Domande Frequenti sui Servizi' : 'Frequently Asked Questions on Services')
+            : (lang === 'it' ? 'Domande Frequenti Forensi' : 'Forensic Frequently Asked Questions')}
         </h3>
         <p className="text-slate-400 text-sm md:text-base leading-relaxed">
-          {lang === 'it' 
-            ? 'Risposte chiare e scientifiche riguardo ai protocolli di indagine dello Studio, ammissibilità legale delle perizie 3D e modalità operative d\'ufficio.'
-            : 'Clear, scientifically grounded answers regarding Studio investigation protocols, 3D report admissibility in court, and technical guidelines.'}
+          {isGenericOnly
+            ? (lang === 'it'
+                ? 'Risposte approfondite e scientifiche riguardo alle aree di attività dello Studio: grafologia forense, analisi documentale, criminalistica applicata e criminologia.'
+                : 'Detailed, scientifically grounded answers regarding our Studio\'s areas of practice: forensic graphology, document analysis, applied criminalistics, and criminology.')
+            : (lang === 'it' 
+                ? 'Risposte chiare e scientifiche riguardo ai protocolli di indagine dello Studio, ammissibilità legale delle perizie 3D e modalità operative d\'ufficio.'
+                : 'Clear, scientifically grounded answers regarding Studio investigation protocols, 3D report admissibility in court, and technical guidelines.')}
         </p>
       </div>
 
