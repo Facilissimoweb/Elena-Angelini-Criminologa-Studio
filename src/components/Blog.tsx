@@ -16,6 +16,7 @@ import {
   ShieldAlert
 } from 'lucide-react';
 import { Language } from '../types';
+import SectionLogo from './SectionLogo';
 
 interface BlogPost {
   id: string;
@@ -460,6 +461,8 @@ export default function Blog({ lang, onNavigateToContact }: BlogProps) {
           <Newspaper className="w-48 h-48 text-cyan-500" />
         </div>
         <div className="max-w-2xl space-y-3 relative z-10">
+          <SectionLogo lang={lang} />
+          
           <div className="inline-flex items-center space-x-1.5 px-2.5 py-1 bg-cyan-950/40 border border-cyan-900/40 rounded-full text-[9px] font-mono font-bold text-cyan-400 tracking-wider uppercase">
             <span className="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-pulse" />
             <span>{lang === 'it' ? 'ARCHIVIO PUBBLICAZIONI' : 'PUBLICATION ARCHIVE'}</span>

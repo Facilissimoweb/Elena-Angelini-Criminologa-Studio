@@ -1,6 +1,7 @@
 import { Shield, Cpu, Activity, ShieldCheck, Layers, FileSpreadsheet } from 'lucide-react';
 import { Language, strengthsData, translations } from '../types';
 import { motion } from 'motion/react';
+import SectionLogo from './SectionLogo';
 
 interface StrengthsProps {
   lang: Language;
@@ -34,6 +35,8 @@ export default function Strengths({ lang, onNavigateToContact }: StrengthsProps)
       
       {/* Header Block */}
       <div className="text-left space-y-4 max-w-3xl">
+        <SectionLogo lang={lang} />
+        
         <div className="inline-flex items-center space-x-2 bg-cold-500/10 border border-cold-500/20 text-cold-400 font-mono text-xs uppercase tracking-widest px-3 py-1.5 rounded">
           <span>// {t['badge-strengths']}</span>
         </div>

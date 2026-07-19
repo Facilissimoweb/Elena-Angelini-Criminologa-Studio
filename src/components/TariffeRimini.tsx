@@ -15,6 +15,7 @@ import {
   Info
 } from 'lucide-react';
 import { Language } from '../types';
+import SectionLogo from './SectionLogo';
 
 interface TariffeRiminiProps {
   lang: Language;
@@ -165,6 +166,8 @@ export default function TariffeRimini({ lang, onNavigateToContact }: TariffeRimi
         className="relative overflow-hidden bg-cold-950/60 border border-cyan-950/40 p-6 md:p-8 rounded-2xl shadow-xl space-y-4"
       >
         <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
+        <SectionLogo lang={lang} />
+        
         <div className="flex items-center space-x-2 text-cyan-400 font-mono text-[10px] md:text-xs uppercase tracking-widest">
           <Coins className="h-4 w-4 text-cyan-400 shrink-0" />
           <span>FINANCIAL_PROTOCOL // TARIFFE REGOLAMENTATE RIMINI</span>

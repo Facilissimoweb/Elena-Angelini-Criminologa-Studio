@@ -2,6 +2,7 @@ import { useState, useRef, MouseEvent } from 'react';
 import { Cpu, RotateCcw, Compass, ZoomIn, Info } from 'lucide-react';
 import { Language, translations } from '../types';
 import { motion } from 'motion/react';
+import SectionLogo from './SectionLogo';
 
 interface Fora3DProps {
   lang: Language;
@@ -53,6 +54,8 @@ export default function Fora3D({ lang }: Fora3DProps) {
         
         {/* Texts & Explanations */}
         <div className="lg:col-span-6 space-y-4">
+          <SectionLogo lang={lang} />
+          
           <span className="text-cold-400 font-mono text-[10px] tracking-widest uppercase font-bold bg-cold-500/10 px-2.5 py-1 rounded border border-cold-500/20">
             // {t['fora-badge']}
           </span>

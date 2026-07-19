@@ -1,6 +1,7 @@
 import { Scale, ChevronRight } from 'lucide-react';
 import { Language, translations, PageId } from '../types';
 import { motion } from 'motion/react';
+import SectionLogo from './SectionLogo';
 
 interface HeroProps {
   lang: Language;
@@ -30,6 +31,8 @@ export default function Hero({ lang, onExploreServices, openBooking }: HeroProps
         
         {/* Main Philosophy & Text Column */}
         <div className="lg:col-span-7 space-y-6">
+          <SectionLogo lang={lang} />
+          
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}

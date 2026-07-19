@@ -2,6 +2,7 @@ import { useState, useEffect, FormEvent, ChangeEvent } from 'react';
 import { Lock, Loader2, CheckCircle, Send, ShieldCheck } from 'lucide-react';
 import { Language, translations } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
+import SectionLogo from './SectionLogo';
 
 interface ContactFormProps {
   lang: Language;
@@ -123,6 +124,8 @@ export default function ContactForm({ lang, triggerToast, prefill, clearPrefill 
         {/* Contact Info Column */}
         <div className="lg:col-span-5 space-y-6 text-left">
           <div className="space-y-4">
+            <SectionLogo lang={lang} />
+            
             <span className="text-cold-400 font-mono text-xs uppercase tracking-widest font-semibold bg-cold-500/10 px-3 py-1 rounded border border-cold-500/10">
               // {t['badge-contacts']}
             </span>

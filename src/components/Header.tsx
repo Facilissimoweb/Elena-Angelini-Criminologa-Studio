@@ -115,8 +115,8 @@ export default function Header({
   return (
     <header className="sticky top-0 z-40 bg-cold-950/90 backdrop-blur-md border-b border-slate-900/60 transition-colors">
       {/* Top Banner // DIRITTO DI DIFESA */}
-      <div className="w-full bg-gradient-to-r from-slate-950 via-cyan-950/40 to-slate-950 border-b border-cyan-500/15 py-1 text-center font-mono text-[10px] md:text-xs font-semibold uppercase tracking-[0.35em] text-cyan-400/90 shadow-inner">
-        Diritto di Difesa
+      <div className="w-full bg-gradient-to-r from-slate-950 via-cyan-950/40 to-slate-950 border-b border-cyan-500/15 py-1.5 text-center font-poppins text-[10px] md:text-xs font-bold uppercase tracking-[0.4em] text-cyan-400/90 shadow-inner">
+        DIRITTO DI DIFESA SCIENTIFICA
       </div>
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         

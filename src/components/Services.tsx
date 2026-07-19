@@ -19,6 +19,7 @@ import {
 import { Language, servicesData, translations } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import ForensicCalculator from './ForensicCalculator';
+import SectionLogo from './SectionLogo';
 
 interface ServicesProps {
   lang: Language;
@@ -390,6 +391,8 @@ export default function Services({ lang, onNavigateToContact }: ServicesProps) {
       
       {/* Title block */}
       <div className="text-left space-y-4 max-w-3xl">
+        <SectionLogo lang={lang} />
+        
         <div className="inline-flex items-center space-x-2 bg-cold-500/10 border border-cold-500/20 text-cold-400 font-mono text-xs uppercase tracking-widest px-3 py-1.5 rounded">
           <span>// {t['badge-methods']}</span>
         </div>
@@ -628,6 +631,8 @@ export default function Services({ lang, onNavigateToContact }: ServicesProps) {
       {filteredMethodologies.length > 0 && (
         <div className="space-y-6 pt-6">
           <div className="text-left border-l-2 border-emerald-500 pl-3 space-y-1">
+            <SectionLogo lang={lang} />
+            
             <h4 className="text-lg font-serif font-extrabold text-slate-100 uppercase tracking-wide">
               {activeLabels.indexTitle}
             </h4>

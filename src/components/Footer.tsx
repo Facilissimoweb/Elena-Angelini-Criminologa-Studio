@@ -25,9 +25,14 @@ export default function Footer({ lang, onOpenLegal, onNavigate }: FooterProps) {
         </p>
 
         {/* VAT and copyright */}
-        <p className="text-slate-500 text-[9px]">
-          &copy; {new Date().getFullYear()} Studio Criminalistica Elena Angelini. {lang === 'it' ? 'Tutti i diritti riservati' : 'All rights reserved'}. | P.IVA 01234567890
-        </p>
+        <div className="space-y-1.5">
+          <p className="text-slate-500 text-[9px]">
+            &copy; {new Date().getFullYear()} Studio Criminalistica Elena Angelini. {lang === 'it' ? 'Tutti i diritti riservati' : 'All rights reserved'}. | P.IVA 01234567890
+          </p>
+          <p className="text-slate-600 text-[8.5px] uppercase tracking-wider font-mono">
+            Designed by <a href="https://facilissimoweb.com" target="_blank" rel="noopener noreferrer" className="text-cyan-500/80 hover:text-cyan-400 hover:underline transition-all">facilissimoweb.com</a> di M.Teresa Rogani
+          </p>
+        </div>
 
         {/* SITE MAP / MAPPA DEL SITO GRID */}
         <div className="py-8 border-t border-b border-slate-900/30 text-left max-w-4xl mx-auto">
@@ -39,10 +44,10 @@ export default function Footer({ lang, onOpenLegal, onNavigate }: FooterProps) {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-6 font-sans">
             {/* Column 1: Navigation */}
             <div className="space-y-3">
-              <h4 className="text-[9px] font-bold tracking-widest text-slate-400 uppercase font-mono border-b border-slate-900/60 pb-1.5">
+              <h4 className="text-[11px] md:text-xs font-bold tracking-widest text-slate-400 uppercase font-mono border-b border-slate-900/60 pb-1.5">
                 {lang === 'it' ? 'Navigazione Principale' : 'Main Navigation'}
               </h4>
-              <ul className="space-y-2 text-[10px]">
+              <ul className="space-y-2 text-xs md:text-[13px]">
                 <li>
                   <button 
                     onClick={() => onNavigate?.('home')}
@@ -88,10 +93,10 @@ export default function Footer({ lang, onOpenLegal, onNavigate }: FooterProps) {
 
             {/* Column 2: Forensic Services */}
             <div className="space-y-3">
-              <h4 className="text-[9px] font-bold tracking-widest text-slate-400 uppercase font-mono border-b border-slate-900/60 pb-1.5">
+              <h4 className="text-[11px] md:text-xs font-bold tracking-widest text-slate-400 uppercase font-mono border-b border-slate-900/60 pb-1.5">
                 {lang === 'it' ? 'Servizi di Criminalistica' : 'Forensic Services'}
               </h4>
-              <ul className="space-y-2 text-[10px]">
+              <ul className="space-y-2 text-xs md:text-[13px]">
                 <li>
                   <button 
                     onClick={() => onNavigate?.('servizi')}
@@ -129,10 +134,10 @@ export default function Footer({ lang, onOpenLegal, onNavigate }: FooterProps) {
 
             {/* Column 3: Resources & Legals */}
             <div className="space-y-3">
-              <h4 className="text-[9px] font-bold tracking-widest text-slate-400 uppercase font-mono border-b border-slate-900/60 pb-1.5">
+              <h4 className="text-[11px] md:text-xs font-bold tracking-widest text-slate-400 uppercase font-mono border-b border-slate-900/60 pb-1.5">
                 {lang === 'it' ? 'Supporto e Legale' : 'Resources & Legal'}
               </h4>
-              <ul className="space-y-2 text-[10px]">
+              <ul className="space-y-2 text-xs md:text-[13px]">
                 <li>
                   <button 
                     onClick={() => onNavigate?.('contatti')}

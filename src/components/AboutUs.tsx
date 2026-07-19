@@ -36,6 +36,7 @@ import {
   Tooltip,
   Legend
 } from 'recharts';
+import SectionLogo from './SectionLogo';
 
 interface AboutUsProps {
   lang: Language;
@@ -494,6 +495,8 @@ export default function AboutUs({ lang, onNavigateToContact }: AboutUsProps) {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(6,182,212,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(6,182,212,0.02)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
         
         <div className="relative z-10 max-w-4xl space-y-6">
+          <SectionLogo lang={lang} />
+          
           <div className="inline-flex items-center space-x-2 rounded-full border border-cold-400/20 bg-cold-500/5 px-3 py-1 text-[10px] font-mono uppercase tracking-widest text-cold-400">
             <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
             <span>{t.badge}</span>
@@ -615,6 +618,8 @@ export default function AboutUs({ lang, onNavigateToContact }: AboutUsProps) {
       {/* SECTION 3: COME OPERIAMO (4 QUESITI DI RICERCA) */}
       <section className="space-y-6">
         <div className="text-left max-w-3xl">
+          <SectionLogo lang={lang} />
+          
           <span className="font-mono text-[9px] uppercase tracking-widest text-cold-400">// SCIENTIFIC_PROTOCOL</span>
           <h3 className="text-xl md:text-2xl font-serif font-extrabold mt-1 uppercase tracking-wide">
             {renderDoubleColor(t.howTitle)}
@@ -747,6 +752,8 @@ export default function AboutUs({ lang, onNavigateToContact }: AboutUsProps) {
       <section className="rounded-xl border border-slate-900/60 bg-slate-950/80 p-6 md:p-8 space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="text-left space-y-1">
+            <SectionLogo lang={lang} />
+            
             <div className="flex items-center space-x-2 text-cold-400 text-xs font-mono">
               <Network className="w-4 h-4 text-cyan-400" />
               <span>STATION_SYS // GROWING_CONSULTANT_INDEX</span>

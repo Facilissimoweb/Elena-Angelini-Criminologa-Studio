@@ -1,6 +1,7 @@
 import { MessageSquare, BadgeCheck, FileText, Quote } from 'lucide-react';
 import { Language, testimonialsData, translations } from '../types';
 import { motion } from 'motion/react';
+import SectionLogo from './SectionLogo';
 
 const authorAvatars: Record<string, string> = {
   t1: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=150', // corporate CEO
@@ -39,6 +40,8 @@ export default function Testimonials({ lang, openBooking }: TestimonialsProps) {
       
       {/* Header Block */}
       <div className="text-left space-y-4 max-w-3xl">
+        <SectionLogo lang={lang} />
+        
         <div className="inline-flex items-center space-x-2 bg-cold-500/10 border border-cold-500/20 text-cold-400 font-mono text-xs uppercase tracking-widest px-3 py-1.5 rounded">
           <span>// {t['badge-testimonials']}</span>
         </div>
