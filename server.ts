@@ -59,90 +59,122 @@ Instructions:
       let success = false;
 
       // Tier 1: Try GROQ using GROQ_API_KEY (with robust fallback to any spaced variations)
-      const groqApiKey = process.env.GROQ_API_KEY || process.env["GROQ_API_ KEY"] || process.env.GROQ_APY_KEY || process.env["GROQ_APY_ KEY"];
+      let groqApiKey = process.env.GROQ_API_KEY || process.env["GROQ_API_ KEY"] || process.env.GROQ_APY_KEY || process.env["GROQ_APY_ KEY"];
 
       if (groqApiKey) {
-        try {
-          console.log("Attempting GROQ API chat completion...");
-          const formattedMessages = [
-            { role: "system", content: systemInstruction },
-            ...messages.map((m: any) => ({
-              role: m.role === "assistant" ? "assistant" : "user",
-              content: m.content
-            }))
-          ];
+        const cleanKey = groqApiKey.replace(/^['"]|['"]$/g, "").trim();
+        if (cleanKey) {
+          try {
+            console.log("Attempting GROQ API chat completion with clean key...");
+            const formattedMessages = [
+              { role: "system", content: systemInstruction },
+              ...messages.map((m: any) => ({
+                role: m.role === "assistant" ? "assistant" : "user",
+                content: m.content
+              }))
+            ];
 
-          const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${groqApiKey.trim()}`
-            },
-            body: JSON.stringify({
-              model: "llama-3.3-70b-versatile",
-              messages: formattedMessages,
-              temperature: 0.7,
-              max_tokens: 1024
-            })
-          });
+            // List of compatible high-performance models to try in sequence
+            const modelsToTry = [
+              "llama-3.3-70b-versatile",
+              "llama-3.1-70b-versatile",
+              "llama3-70b-8192",
+              "mixtral-8x7b-32768"
+            ];
 
-          if (response.ok) {
-            const data = await response.json();
-            if (data.choices && data.choices[0] && data.choices[0].message) {
-              replyText = data.choices[0].message.content;
-              success = true;
-              console.log("GROQ API responded successfully.");
-            } else {
-              throw new Error("Invalid GROQ response format");
+            let groqResponse = null;
+            let lastGroqError = "";
+
+            for (const modelName of modelsToTry) {
+              try {
+                console.log(`Trying Groq model: ${modelName}...`);
+                const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${cleanKey}`
+                  },
+                  body: JSON.stringify({
+                    model: modelName,
+                    messages: formattedMessages,
+                    temperature: 0.7,
+                    max_tokens: 1024
+                  })
+                });
+
+                if (response.ok) {
+                  groqResponse = await response.json();
+                  console.log(`GROQ API responded successfully with model ${modelName}.`);
+                  break; // Success!
+                } else {
+                  const errBody = await response.text();
+                  lastGroqError = `HTTP ${response.status} - ${errBody}`;
+                  console.warn(`Groq model ${modelName} failed: ${lastGroqError}`);
+                  // If it's a 401 unauthorized, the API Key itself is wrong, no need to try other models
+                  if (response.status === 401) {
+                    break;
+                  }
+                }
+              } catch (err: any) {
+                lastGroqError = err.message || String(err);
+                console.warn(`Fetch error for model ${modelName}: ${lastGroqError}`);
+              }
             }
-          } else {
-            console.warn(`GROQ API returned non-OK status: ${response.status}. Bypassing error to fallback...`);
-            throw new Error(`GROQ HTTP Error ${response.status}`);
+
+            if (groqResponse && groqResponse.choices && groqResponse.choices[0] && groqResponse.choices[0].message) {
+              replyText = groqResponse.choices[0].message.content;
+              success = true;
+            } else {
+              throw new Error(lastGroqError || "No successful response from any Groq model");
+            }
+          } catch (groqError: any) {
+            console.error("GROQ API Failed:", groqError.message || groqError);
+            // Let it fall through to Gemini or Mock
           }
-        } catch (groqError: any) {
-          console.error("GROQ API Failed:", groqError.message || groqError);
-          // Let it fall through to Gemini or Mock
         }
       }
 
       // Tier 2: Try Gemini API as fallback
       if (!success) {
-        const geminiApiKey = process.env.GEMINI_API_KEY;
+        let geminiApiKey = process.env.GEMINI_API_KEY;
         if (geminiApiKey) {
-          try {
-            console.log("Attempting Gemini API as fallback...");
-            const ai = new GoogleGenAI({
-              apiKey: geminiApiKey,
-              httpOptions: {
-                headers: {
-                  'User-Agent': 'aistudio-build',
+          const cleanGeminiKey = geminiApiKey.replace(/^['"]|['"]$/g, "").trim();
+          if (cleanGeminiKey) {
+            try {
+              console.log("Attempting Gemini API as fallback...");
+              const ai = new GoogleGenAI({
+                apiKey: cleanGeminiKey,
+                httpOptions: {
+                  headers: {
+                    'User-Agent': 'aistudio-build',
+                  }
                 }
+              });
+
+              let promptText = "";
+              messages.forEach((msg: any) => {
+                const roleName = msg.role === "user" ? "Utente" : "Assistente Forense";
+                promptText += `${roleName}: ${msg.content}\n`;
+              });
+              promptText += "Assistente Forense:";
+
+              const response = await ai.models.generateContent({
+                model: "gemini-3.5-flash",
+                contents: promptText,
+                config: {
+                  systemInstruction,
+                  temperature: 0.7,
+                },
+              });
+
+              if (response.text) {
+                replyText = response.text;
+                success = true;
+                console.log("Gemini API fallback responded successfully.");
               }
-            });
-
-            let promptText = "";
-            messages.forEach((msg: any) => {
-              const roleName = msg.role === "user" ? "Utente" : "Assistente Forense";
-              promptText += `${roleName}: ${msg.content}\n`;
-            });
-            promptText += "Assistente Forense:";
-
-            const response = await ai.models.generateContent({
-              model: "gemini-3.5-flash",
-              contents: promptText,
-              config: {
-                systemInstruction,
-                temperature: 0.7,
-              },
-            });
-
-            if (response.text) {
-              replyText = response.text;
-              success = true;
-              console.log("Gemini API fallback responded successfully.");
+            } catch (geminiError: any) {
+              console.error("Gemini API Fallback Failed:", geminiError.message || geminiError);
             }
-          } catch (geminiError: any) {
-            console.error("Gemini API Fallback Failed:", geminiError.message || geminiError);
           }
         }
       }
