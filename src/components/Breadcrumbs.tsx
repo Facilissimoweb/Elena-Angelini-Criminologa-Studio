@@ -22,6 +22,7 @@ export default function Breadcrumbs({ lang, currentPage, setCurrentPage }: Bread
     faq: 'nav-faq',
     contatti: 'nav-contacts',
     tariffe: 'nav-tariffe',
+    portfolio: 'nav-portfolio',
   };
 
   const getLabel = (pageId: PageId): string => {

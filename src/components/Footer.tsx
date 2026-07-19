@@ -82,6 +82,14 @@ export default function Footer({ lang, onOpenLegal, onNavigate }: FooterProps) {
                 </li>
                 <li>
                   <button 
+                    onClick={() => onNavigate?.('portfolio')}
+                    className="text-slate-500 hover:text-cyan-400 transition-colors cursor-pointer text-left focus:outline-none font-bold"
+                  >
+                    &raquo; {lang === 'it' ? 'Portfolio Professionale' : 'Professional Portfolio'}
+                  </button>
+                </li>
+                <li>
+                  <button 
                     onClick={() => onNavigate?.('blog')}
                     className="text-slate-500 hover:text-cyan-400 transition-colors cursor-pointer text-left focus:outline-none"
                   >

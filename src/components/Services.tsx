@@ -24,7 +24,6 @@ import { Language, servicesData, translations } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import ForensicCalculator from './ForensicCalculator';
 import SectionLogo from './SectionLogo';
-import HumanBodyMap from './HumanBodyMap';
 import { jsPDF } from 'jspdf';
 
 interface ServicesProps {
@@ -481,19 +480,6 @@ export default function Services({ lang, onNavigateToContact }: ServicesProps) {
     setExpandedMethodologyId(expandedMethodologyId === id ? null : id);
   };
 
-  const handleMapFilter = (query: string, tag: string | null) => {
-    setSearchQuery(query);
-    setSelectedTag(tag);
-    
-    // Smooth scroll to searchable workstation for better usability
-    setTimeout(() => {
-      const element = document.getElementById('forensic-workstation-trigger');
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }, 100);
-  };
-
   // Extra detailed text to display when a service card is clicked/expanded to enrich content
   const extraDetails: Record<string, { it: string[]; en: string[] }> = {
     s1: {
@@ -683,21 +669,6 @@ export default function Services({ lang, onNavigateToContact }: ServicesProps) {
         <p className="text-slate-400 text-sm md:text-base leading-relaxed">
           {t['p2-desc']}
         </p>
-      </div>
-
-      {/* Interactive Anatomical Body Map Section */}
-      <div className="space-y-4">
-        <div className="text-left border-l-2 border-cyan-500 pl-3 space-y-1">
-          <h4 className="text-sm font-mono text-slate-400 uppercase tracking-widest">
-            {lang === 'it' ? 'MAPPING BIOMETRICO // ANALISI ANATOMICA FORENSE' : 'BIOMETRIC MAPPING // FORENSIC ANATOMICAL ANALYSIS'}
-          </h4>
-          <p className="text-xs text-slate-500 font-sans leading-relaxed">
-            {lang === 'it'
-              ? 'Interagisci con i distretti biologici sulla mappa corporea 3D per caricare istantaneamente le metodologie di indagine associate alle perizie dello studio.'
-              : 'Interact with biological segments on the 3D body map to instantly query investigative methodologies linked to our technical legal reports.'}
-          </p>
-        </div>
-        <HumanBodyMap lang={lang} onFilterChange={handleMapFilter} />
       </div>
 
       {/* Interactive Cyberpunk Search Workstation */}

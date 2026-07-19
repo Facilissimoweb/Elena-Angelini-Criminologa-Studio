@@ -17,6 +17,7 @@ import Blog from './components/Blog';
 import ForensicChat from './components/ForensicChat';
 import AboutUs from './components/AboutUs';
 import TariffeRimini from './components/TariffeRimini';
+import Portfolio from './components/Portfolio';
 import ForensicLexicon from './components/ForensicLexicon';
 import CookieBanner from './components/CookieBanner';
 import LegalModal, { getStoredConsent, loadGA4 } from './components/LegalModal';
@@ -60,7 +61,7 @@ export default function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '') as PageId;
-      const validPages: PageId[] = ['home', 'chi-siamo', 'servizi', 'punti-forza', 'testimonianze', 'contatti', 'faq', 'blog', 'tariffe'];
+      const validPages: PageId[] = ['home', 'chi-siamo', 'servizi', 'punti-forza', 'testimonianze', 'contatti', 'faq', 'blog', 'tariffe', 'portfolio'];
       if (validPages.includes(hash)) {
         setCurrentPage(hash);
       } else {
@@ -113,6 +114,10 @@ export default function App() {
       tariffe: {
         it: "Tariffe e Costi Studio Angelini Rimini. Prezzi trasparenti e preventivi dettagliati in linea con le tabelle provinciali approvate dalla Prefettura.",
         en: "Rates and Tariffs of Studio Angelini Rimini. Transparent pricing models and custom estimates fully compliant with local Prefettura limits."
+      },
+      portfolio: {
+        it: "Portfolio Professionale Elena Angelini - Criminologia, Criminalistica e Scienze Forensi. Attività di consulenza, formazione, ricerca e pubblicazioni.",
+        en: "Elena Angelini Professional Portfolio - Criminology, Criminalistics and Forensic Sciences. Consulting, training, research and publications."
       }
     };
 
@@ -152,6 +157,10 @@ export default function App() {
       tariffe: {
         it: "Tariffe e Trasparenza | Studio Criminalistica Elena Angelini",
         en: "Rates & Pricing | Elena Angelini Criminalistics Studio"
+      },
+      portfolio: {
+        it: "Portfolio | Studio Criminalistica Elena Angelini",
+        en: "Portfolio | Elena Angelini Criminalistics Studio"
       }
     };
 
@@ -326,6 +335,13 @@ export default function App() {
 
             {currentPage === 'tariffe' && (
               <TariffeRimini
+                lang={lang}
+                onNavigateToContact={() => handlePageChange('contatti')}
+              />
+            )}
+
+            {currentPage === 'portfolio' && (
+              <Portfolio
                 lang={lang}
                 onNavigateToContact={() => handlePageChange('contatti')}
               />

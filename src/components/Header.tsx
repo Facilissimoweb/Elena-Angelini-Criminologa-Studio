@@ -101,6 +101,7 @@ export default function Header({
     { id: 'punti-forza', labelKey: 'nav-why' },
     { id: 'testimonianze', labelKey: 'nav-testimonials' },
     { id: 'tariffe', labelKey: 'nav-tariffe' },
+    { id: 'portfolio', labelKey: 'nav-portfolio' },
     { id: 'blog', labelKey: 'nav-blog' },
     { id: 'faq', labelKey: 'nav-faq' },
     { id: 'contatti', labelKey: 'nav-contacts' },
