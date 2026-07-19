@@ -1,8 +1,20 @@
 import { useState, useRef, MouseEvent } from 'react';
-import { Cpu, RotateCcw, Compass, ZoomIn, Info } from 'lucide-react';
+import { Cpu, RotateCcw, Compass, ZoomIn, Info, Sparkles, Clock, Target, TrendingDown } from 'lucide-react';
 import { Language, translations } from '../types';
 import { motion } from 'motion/react';
 import SectionLogo from './SectionLogo';
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
+  Legend as RechartsLegend
+} from 'recharts';
 
 interface Fora3DProps {
   lang: Language;
@@ -18,6 +30,92 @@ export default function Fora3D({ lang }: Fora3DProps) {
   const [coords, setCoords] = useState<{ x: number; y: number }>({ x: 75, y: 30 });
   
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Data for Precision Chart (Error Margin in mm - lower is better)
+  const precisionData = [
+    {
+      task: lang === 'it' ? 'Traiettorie Balistiche' : 'Ballistic Trajs',
+      traditional: 35.0,
+      fora3d: 0.3,
+    },
+    {
+      task: lang === 'it' ? 'Dinamica Collisioni' : 'Collision Dynamics',
+      traditional: 50.0,
+      fora3d: 0.5,
+    },
+    {
+      task: lang === 'it' ? 'Fotogrammetria Reperti' : 'Evidence Photogram',
+      traditional: 15.0,
+      fora3d: 0.2,
+    },
+    {
+      task: lang === 'it' ? 'Mappatura Spaziale' : 'Spatial Mapping',
+      traditional: 40.0,
+      fora3d: 0.4,
+    }
+  ];
+
+  // Data for Processing Time Chart (Time spent in hours - lower is better)
+  const timeData = [
+    {
+      phase: lang === 'it' ? 'Rilievo Metrico' : 'Metric Surveying',
+      traditional: 12.0,
+      fora3d: 1.5,
+    },
+    {
+      phase: lang === 'it' ? 'Calcolo Vettori' : 'Vector Comp',
+      traditional: 18.0,
+      fora3d: 2.0,
+    },
+    {
+      phase: lang === 'it' ? 'Ricostruzione Scena' : 'Scene Reconst',
+      traditional: 48.0,
+      fora3d: 4.0,
+    },
+    {
+      phase: lang === 'it' ? 'Generazione Report' : 'Report Gen',
+      traditional: 8.0,
+      fora3d: 1.0,
+    }
+  ];
+
+  const chartLabels: Record<string, any> = {
+    it: {
+      precisionTitle: "PRECISIONE MILLIMETRICA (SCARTO IN mm)",
+      precisionDesc: "Margine medio di scarto d'errore (meno è meglio). La ricostruzione 3D virtuale abbatte la tolleranza manuale.",
+      timeTitle: "TEMPI DI ELABORAZIONE (ORE DI LAVORO)",
+      timeDesc: "Ore di lavoro stimate per il rilievo e l'analisi dettagliata (meno è meglio). Ottimizzazione e automazione digitale.",
+      traditional: "Rilievo Tradizionale",
+      fora3d: "Protocollo FORA 3D",
+    },
+    en: {
+      precisionTitle: "MILLIMETER PRECISION (ERROR MARGIN)",
+      precisionDesc: "Average error margin in mm (lower is better). Virtual 3D reconstruction minimizes manual tolerances.",
+      timeTitle: "PROCESSING TIME (WORK HOURS)",
+      timeDesc: "Estimated hours for survey and detailed analysis (lower is better). Digital automation optimization.",
+      traditional: "Traditional Methods",
+      fora3d: "FORA 3D Protocol",
+    }
+  };
+
+  const currentLabels = chartLabels[lang] || chartLabels['it'];
+
+  const CustomTooltip = ({ active, payload, label, unit }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-slate-950/95 border border-cyan-500/35 p-2.5 rounded font-mono text-[9px] shadow-2xl text-slate-100 space-y-1">
+          <p className="font-bold border-b border-slate-900 pb-1 text-cyan-400">{label}</p>
+          {payload.map((pld: any) => (
+            <div key={pld.name} className="flex justify-between space-x-4">
+              <span style={{ color: pld.color }} className="font-medium">{pld.name}:</span>
+              <span className="font-bold">{pld.value} {unit}</span>
+            </div>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
 
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
@@ -300,6 +398,170 @@ export default function Fora3D({ lang }: Fora3DProps) {
 
         </div>
 
+      </div>
+
+      {/* Horizontal Divider */}
+      <div className="my-8 md:my-10 border-t border-cyan-950/40"></div>
+
+      {/* NEW SECTION: DATA VISUALIZATION WIDGET (RECHARTS) */}
+      <div className="space-y-6 text-left relative z-10">
+        <div className="space-y-2">
+          <span className="text-cold-400 font-mono text-[9px] uppercase tracking-widest font-bold bg-cyan-950/30 px-2.5 py-1 rounded border border-cyan-900/20">
+            // METRIC_ANALYSIS // DASHBOARD PRESTAZIONALE
+          </span>
+          <h4 className="text-lg md:text-xl font-bold font-serif text-slate-100 uppercase tracking-wide">
+            {lang === 'it' 
+              ? 'Confronto Prestazioni Scientifiche: Precisione e Tempi' 
+              : 'Scientific Performance Comparison: Precision & Timeframes'}
+          </h4>
+          <p className="text-slate-400 text-xs max-w-3xl leading-relaxed">
+            {lang === 'it'
+              ? "Un'analisi comparativa quantitativa tra i metodi tradizionali di rilevazione forense e la ricostruzione tridimensionale ad alta definizione del protocollo FORA 3D dello Studio Angelini."
+              : "A quantitative comparative analysis between traditional forensic survey methods and the high-definition 3D reconstruction of the FORA 3D protocol by Studio Angelini."}
+          </p>
+        </div>
+
+        {/* Bento Grid layout for charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          {/* Chart 1: Precisione Millimetrica */}
+          <div className="bg-slate-950/80 border border-slate-900 p-4 md:p-5 rounded-lg space-y-4">
+            <div className="flex items-start justify-between border-b border-slate-900 pb-3">
+              <div className="space-y-1">
+                <div className="flex items-center space-x-2 text-cyan-400 text-[10px] font-mono uppercase tracking-widest font-bold">
+                  <Target className="w-3.5 h-3.5" />
+                  <span>{currentLabels.precisionTitle}</span>
+                </div>
+                <p className="text-[10px] text-slate-400 leading-normal">
+                  {currentLabels.precisionDesc}
+                </p>
+              </div>
+              <span className="text-[8.5px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded shrink-0 uppercase tracking-wider font-bold">
+                {lang === 'it' ? 'SUB-MILLIMETRICO' : 'SUB-MILLIMETER'}
+              </span>
+            </div>
+
+            <div className="h-56 w-full flex items-center justify-center font-mono text-[10px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={precisionData} margin={{ top: 15, right: 10, left: -25, bottom: 5 }}>
+                  <defs>
+                    <linearGradient id="colorTrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#ef4444" stopOpacity={0.25}/>
+                      <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorFora" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.4}/>
+                      <stop offset="95%" stopColor="#06b6d4" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#0f172a" opacity={0.6} />
+                  <XAxis 
+                    dataKey="task" 
+                    tick={{ fill: '#94a3b8', fontSize: 8, fontFamily: 'monospace' }} 
+                    stroke="#1e293b" 
+                  />
+                  <YAxis 
+                    tick={{ fill: '#94a3b8', fontSize: 8, fontFamily: 'monospace' }} 
+                    stroke="#1e293b" 
+                  />
+                  <RechartsTooltip content={<CustomTooltip unit="mm" />} />
+                  <RechartsLegend 
+                    wrapperStyle={{ fontSize: '9px', fontFamily: 'monospace', paddingTop: '10px' }} 
+                    iconSize={8}
+                    iconType="circle"
+                  />
+                  <Area 
+                    type="monotone" 
+                    name={currentLabels.traditional} 
+                    dataKey="traditional" 
+                    stroke="#ef4444" 
+                    strokeWidth={1.5} 
+                    fillOpacity={1} 
+                    fill="url(#colorTrad)" 
+                  />
+                  <Area 
+                    type="monotone" 
+                    name={currentLabels.fora3d} 
+                    dataKey="fora3d" 
+                    stroke="#06b6d4" 
+                    strokeWidth={2} 
+                    fillOpacity={1} 
+                    fill="url(#colorFora)" 
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Chart 2: Tempi di Elaborazione */}
+          <div className="bg-slate-950/80 border border-slate-900 p-4 md:p-5 rounded-lg space-y-4">
+            <div className="flex items-start justify-between border-b border-slate-900 pb-3">
+              <div className="space-y-1">
+                <div className="flex items-center space-x-2 text-emerald-400 text-[10px] font-mono uppercase tracking-widest font-bold">
+                  <Clock className="w-3.5 h-3.5" />
+                  <span>{currentLabels.timeTitle}</span>
+                </div>
+                <p className="text-[10px] text-slate-400 leading-normal">
+                  {currentLabels.timeDesc}
+                </p>
+              </div>
+              <span className="text-[8.5px] font-mono text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-1.5 py-0.5 rounded shrink-0 uppercase tracking-wider font-bold">
+                {lang === 'it' ? 'ELABORAZIONE HD' : 'HD PROCESSING'}
+              </span>
+            </div>
+
+            <div className="h-56 w-full flex items-center justify-center font-mono text-[10px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={timeData} margin={{ top: 15, right: 10, left: -25, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#0f172a" opacity={0.6} />
+                  <XAxis 
+                    dataKey="phase" 
+                    tick={{ fill: '#94a3b8', fontSize: 8, fontFamily: 'monospace' }} 
+                    stroke="#1e293b" 
+                  />
+                  <YAxis 
+                    tick={{ fill: '#94a3b8', fontSize: 8, fontFamily: 'monospace' }} 
+                    stroke="#1e293b" 
+                  />
+                  <RechartsTooltip content={<CustomTooltip unit="h" />} />
+                  <RechartsLegend 
+                    wrapperStyle={{ fontSize: '9px', fontFamily: 'monospace', paddingTop: '10px' }} 
+                    iconSize={8}
+                    iconType="rect"
+                  />
+                  <Bar 
+                    name={currentLabels.traditional} 
+                    dataKey="traditional" 
+                    fill="#334155" 
+                    radius={[2, 2, 0, 0]} 
+                  />
+                  <Bar 
+                    name={currentLabels.fora3d} 
+                    dataKey="fora3d" 
+                    fill="#10b981" 
+                    radius={[2, 2, 0, 0]} 
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Dynamic callout note */}
+        <div className="bg-cyan-950/10 border border-cyan-900/20 rounded-lg p-3 text-[10px] font-mono text-cyan-400/90 flex items-start space-x-3">
+          <Sparkles className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <span className="font-bold uppercase tracking-wider">
+              {lang === 'it' ? 'NOTA DI PROTOCOLLO:' : 'PROTOCOL NOTE:'}
+            </span>
+            <p className="leading-relaxed">
+              {lang === 'it'
+                ? "Il software FORA abbatte l'errore metrico del 98.5% rispetto alle rilevazioni manuali classiche (rotella metrica, distanziometri laser non integrati) e riduce i tempi di elaborazione grafica dei vettori grazie all'automazione geometrica cloud-based dello studio."
+                : "FORA software cuts metric error margin by 98.5% compared to classic manual surveys (measuring tape, unintegrated laser rangefinders) and dramatically shrinks graphical vector processing time through the studio's cloud-based geometric automation."}
+            </p>
+          </div>
+        </div>
       </div>
 
     </div>

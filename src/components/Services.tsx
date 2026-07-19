@@ -20,6 +20,7 @@ import { Language, servicesData, translations } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import ForensicCalculator from './ForensicCalculator';
 import SectionLogo from './SectionLogo';
+import HumanBodyMap from './HumanBodyMap';
 
 interface ServicesProps {
   lang: Language;
@@ -213,6 +214,19 @@ export default function Services({ lang, onNavigateToContact }: ServicesProps) {
     setExpandedMethodologyId(expandedMethodologyId === id ? null : id);
   };
 
+  const handleMapFilter = (query: string, tag: string | null) => {
+    setSearchQuery(query);
+    setSelectedTag(tag);
+    
+    // Smooth scroll to searchable workstation for better usability
+    setTimeout(() => {
+      const element = document.getElementById('forensic-workstation-trigger');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
+  };
+
   // Extra detailed text to display when a service card is clicked/expanded to enrich content
   const extraDetails: Record<string, { it: string[]; en: string[] }> = {
     s1: {
@@ -404,8 +418,23 @@ export default function Services({ lang, onNavigateToContact }: ServicesProps) {
         </p>
       </div>
 
+      {/* Interactive Anatomical Body Map Section */}
+      <div className="space-y-4">
+        <div className="text-left border-l-2 border-cyan-500 pl-3 space-y-1">
+          <h4 className="text-sm font-mono text-slate-400 uppercase tracking-widest">
+            {lang === 'it' ? 'MAPPING BIOMETRICO // ANALISI ANATOMICA FORENSE' : 'BIOMETRIC MAPPING // FORENSIC ANATOMICAL ANALYSIS'}
+          </h4>
+          <p className="text-xs text-slate-500 font-sans leading-relaxed">
+            {lang === 'it'
+              ? 'Interagisci con i distretti biologici sulla mappa corporea 3D per caricare istantaneamente le metodologie di indagine associate alle perizie dello studio.'
+              : 'Interact with biological segments on the 3D body map to instantly query investigative methodologies linked to our technical legal reports.'}
+          </p>
+        </div>
+        <HumanBodyMap lang={lang} onFilterChange={handleMapFilter} />
+      </div>
+
       {/* Interactive Cyberpunk Search Workstation */}
-      <div className="bg-slate-950/80 border border-slate-900 rounded-xl p-5 md:p-6 space-y-4 relative shadow-xl">
+      <div id="forensic-workstation-trigger" className="bg-slate-950/80 border border-slate-900 rounded-xl p-5 md:p-6 space-y-4 relative shadow-xl scroll-mt-24">
         <div className="absolute top-2.5 right-3 font-mono text-[8px] text-cyan-500/20">
           STATION // QUERY_ENGINE_V2.0 // SEARCHABLE_INDEX
         </div>
