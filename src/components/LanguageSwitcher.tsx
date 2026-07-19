@@ -132,18 +132,10 @@ export default function LanguageSwitcher({ onLanguageChangeExternal }: LanguageS
     if (selectEl) {
       selectEl.value = langCode;
       selectEl.dispatchEvent(new Event('change'));
-    } else {
-      // Fallback: se il widget non è ancora pronto, ritenta dopo un breve delay
-      setTimeout(() => {
-        const retrySelectEl = document.querySelector('.goog-te-combo') as HTMLSelectElement;
-        if (retrySelectEl) {
-          retrySelectEl.value = langCode;
-          retrySelectEl.dispatchEvent(new Event('change'));
-        } else {
-          console.warn("Google Translate widget (.goog-te-combo) not found. Continuing with local translations.");
-        }
-      }, 400);
     }
+
+    // Forza il ricaricamento della pagina per sincronizzare stabilmente Google Translate con il Virtual DOM di React
+    window.location.reload();
   };
 
   const currentLang = GOOGLE_LANGUAGES.find(l => l.code === selectedGoogleLang) || GOOGLE_LANGUAGES[0];

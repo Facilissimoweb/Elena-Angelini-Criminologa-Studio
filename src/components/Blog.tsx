@@ -321,6 +321,7 @@ interface BlogProps {
 }
 
 export default function Blog({ lang, onNavigateToContact }: BlogProps) {
+  const contentLang = lang === 'it' ? 'it' : 'en';
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
@@ -358,7 +359,7 @@ export default function Blog({ lang, onNavigateToContact }: BlogProps) {
                             postCatIT === activeCategory;
 
       // Search Query Filter
-      const textToSearch = `${post.title[lang]} ${post.excerpt[lang]} ${post.category[lang]}`.toLowerCase();
+      const textToSearch = `${post.title[contentLang]} ${post.excerpt[contentLang]} ${post.category[contentLang]}`.toLowerCase();
       const searchMatch = textToSearch.includes(searchQuery.toLowerCase());
 
       return categoryMatch && searchMatch;
@@ -525,7 +526,7 @@ export default function Blog({ lang, onNavigateToContact }: BlogProps) {
                         <div className="flex items-center justify-between text-[9px] font-mono uppercase tracking-widest text-slate-500 select-none">
                           <span className="text-cyan-400/80 font-bold flex items-center space-x-1">
                             <Tag className="w-2.5 h-2.5 shrink-0" />
-                            <span>{post.category[lang]}</span>
+                            <span>{post.category[contentLang]}</span>
                           </span>
                           <span className="flex items-center space-x-1">
                             <Clock className="w-2.5 h-2.5 shrink-0" />
@@ -535,12 +536,12 @@ export default function Blog({ lang, onNavigateToContact }: BlogProps) {
 
                         {/* Title */}
                         <h3 className="text-sm font-serif font-bold text-slate-200 tracking-tight leading-snug group-hover:text-cyan-400 transition-colors">
-                          {post.title[lang]}
+                          {post.title[contentLang]}
                         </h3>
 
                         {/* Excerpt */}
                         <p className="text-[11px] text-slate-400 leading-relaxed text-justify line-clamp-3">
-                          {post.excerpt[lang]}
+                          {post.excerpt[contentLang]}
                         </p>
                       </div>
 
@@ -611,7 +612,7 @@ export default function Blog({ lang, onNavigateToContact }: BlogProps) {
                         )}
                       </div>
                       <p className="text-[10px] leading-relaxed font-sans font-medium text-slate-300">
-                        {item.title[lang]}
+                        {item.title[contentLang]}
                       </p>
                     </div>
                   ))}
@@ -717,7 +718,7 @@ export default function Blog({ lang, onNavigateToContact }: BlogProps) {
               {/* Category, Date & Read Time Meta */}
               <div className="flex flex-wrap items-center gap-3 md:gap-4 text-[9px] font-mono uppercase tracking-widest text-slate-500 border-b border-slate-900/60 pb-4 select-none">
                 <span className="text-cyan-400 font-bold bg-cyan-950/30 border border-cyan-900/30 px-2.5 py-1 rounded">
-                  {selectedPost?.category[lang]}
+                  {selectedPost?.category[contentLang]}
                 </span>
                 <span className="flex items-center space-x-1">
                   <Calendar className="w-3 h-3 shrink-0" />
@@ -735,19 +736,19 @@ export default function Blog({ lang, onNavigateToContact }: BlogProps) {
 
               {/* Title */}
               <h1 className="text-xl md:text-2xl font-serif font-bold text-slate-100 tracking-tight leading-tight text-left">
-                {selectedPost?.title[lang]}
+                {selectedPost?.title[contentLang]}
               </h1>
 
               {/* Big blockquote / excerpt */}
               <div className="p-4 bg-slate-900/10 border-l-2 border-cyan-500 rounded-r-lg text-left">
                 <p className="text-xs md:text-sm text-slate-300 italic leading-relaxed text-justify">
-                  "{selectedPost?.excerpt[lang]}"
+                  "{selectedPost?.excerpt[contentLang]}"
                 </p>
               </div>
 
               {/* Main text content body */}
               <div className="space-y-4 max-w-none text-left font-sans">
-                {selectedPost && renderContentText(selectedPost.content[lang])}
+                {selectedPost && renderContentText(selectedPost.content[contentLang])}
               </div>
 
               <hr className="border-slate-900 my-8" />
