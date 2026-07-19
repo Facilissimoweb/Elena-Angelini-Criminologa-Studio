@@ -181,6 +181,20 @@ export default function Footer({ lang, onOpenLegal, onNavigate }: FooterProps) {
           </p>
         </div>
 
+        {/* AI Declaration Notice */}
+        <div className="max-w-xl mx-auto p-4 bg-cyan-950/10 border border-cyan-900/40 rounded-xl space-y-2 text-left">
+          <div className="flex items-center space-x-1.5 text-cyan-400 font-bold uppercase tracking-wider text-[8px]">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shrink-0" />
+            <span>AI_ASSISTED_SYSTEM // INFORMATIVA IA</span>
+          </div>
+          <p className="text-[9px] text-slate-400 leading-relaxed font-sans">
+            {lang === 'it' 
+              ? "Si dichiara che questo sito si avvale di strumenti di Intelligenza Artificiale (IA) per l'ottimizzazione dell'esperienza di navigazione, il supporto interattivo dell'assistente virtuale e la generazione di elementi informativi."
+              : "We declare that this website utilizes Artificial Intelligence (AI) systems to optimize the browsing experience, provide interactive virtual assistance, and facilitate information delivery."
+            }
+          </p>
+        </div>
+
         {/* Accepted Payment Methods Section */}
         <div className="py-4 border-t border-b border-slate-900/30 max-w-xl mx-auto space-y-3.5 select-none">
           <div 
