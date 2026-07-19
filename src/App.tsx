@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Breadcrumbs from './components/Breadcrumbs';
 import PageProgressBar from './components/PageProgressBar';
+import VisioneFacilitata from './components/VisioneFacilitata';
 import Hero from './components/Hero';
 import Fora3D from './components/Fora3D';
 import Services from './components/Services';
@@ -15,6 +16,7 @@ import FAQ from './components/FAQ';
 import Blog from './components/Blog';
 import ForensicChat from './components/ForensicChat';
 import AboutUs from './components/AboutUs';
+import TariffeRimini from './components/TariffeRimini';
 import CookieBanner from './components/CookieBanner';
 import LegalModal, { getStoredConsent, loadGA4 } from './components/LegalModal';
 import { Language, PageId, translations } from './types';
@@ -191,6 +193,13 @@ export default function App() {
                 onNavigateToContact={() => handlePageChange('contatti')}
               />
             )}
+
+            {currentPage === 'tariffe' && (
+              <TariffeRimini
+                lang={lang}
+                onNavigateToContact={() => handlePageChange('contatti')}
+              />
+            )}
           </motion.div>
         </AnimatePresence>
       </main>
@@ -223,6 +232,9 @@ export default function App() {
 
       {/* Floating Forensic Chatbot Assistant (Adaptive full-screen on mobile) */}
       <ForensicChat lang={lang} />
+
+      {/* Persistent floating Visione Facilitata Accessibility Widget */}
+      <VisioneFacilitata lang={lang} />
 
       {/* Cookie Consent Floating Bottom Banner */}
       <CookieBanner

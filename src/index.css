@@ -66,3 +66,133 @@ body {
 }
 
 
+/* --- ACCESSIBILITY AND ASSISTED VISION (VISIONE FACILITATA) OVERRIDES --- */
+
+/* 1. High Contrast Mode Overrides */
+.accessibility-high-contrast {
+  background-color: #000000 !important;
+  background-image: none !important;
+  color: #ffffff !important;
+}
+
+.accessibility-high-contrast .forensic-grid {
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+.accessibility-high-contrast .scanlines::before {
+  display: none !important;
+}
+
+/* Make backgrounds solid black and text bright white/cyan/yellow */
+.accessibility-high-contrast div,
+.accessibility-high-contrast section,
+.accessibility-high-contrast header,
+.accessibility-high-contrast footer,
+.accessibility-high-contrast main,
+.accessibility-high-contrast nav,
+.accessibility-high-contrast form,
+.accessibility-high-contrast ul,
+.accessibility-high-contrast ol,
+.accessibility-high-contrast li {
+  background-color: #000000 !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+.accessibility-high-contrast h1,
+.accessibility-high-contrast h2,
+.accessibility-high-contrast h3,
+.accessibility-high-contrast h4,
+.accessibility-high-contrast h5,
+.accessibility-high-contrast h6,
+.accessibility-high-contrast strong {
+  color: #00ffff !important; /* Extremely high contrast cyan */
+  text-shadow: none !important;
+}
+
+.accessibility-high-contrast p,
+.accessibility-high-contrast span,
+.accessibility-high-contrast label,
+.accessibility-high-contrast time,
+.accessibility-high-contrast blockquote {
+  color: #ffffff !important;
+}
+
+/* Force stark yellow borders and color for buttons/links so they clearly stand out */
+.accessibility-high-contrast button,
+.accessibility-high-contrast a,
+.accessibility-high-contrast select,
+.accessibility-high-contrast input,
+.accessibility-high-contrast textarea {
+  background-color: #000000 !important;
+  color: #ffff00 !important; /* Pure contrast yellow */
+  border: 2px solid #ffff00 !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+}
+
+.accessibility-high-contrast button:hover,
+.accessibility-high-contrast a:hover {
+  background-color: #ffff00 !important;
+  color: #000000 !important;
+}
+
+.accessibility-high-contrast input::placeholder,
+.accessibility-high-contrast textarea::placeholder {
+  color: #888888 !important;
+}
+
+/* Ensure the accessibility widget itself stays accessible and visible */
+.accessibility-high-contrast .accessibility-panel-content,
+.accessibility-high-contrast .accessibility-panel-content * {
+  background-color: #000000 !important;
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+}
+
+.accessibility-high-contrast .accessibility-panel-content button {
+  color: #ffff00 !important;
+  border-color: #ffff00 !important;
+}
+
+.accessibility-high-contrast .accessibility-panel-content button:hover {
+  background-color: #ffff00 !important;
+  color: #000000 !important;
+}
+
+.accessibility-high-contrast #accessibility-widget-btn {
+  background: #000000 !important;
+  color: #ffff00 !important;
+  border: 3px solid #ffff00 !important;
+  box-shadow: none !important;
+}
+
+/* 2. High Legibility Font Overrides */
+.accessibility-readable-font {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+
+.accessibility-readable-font * {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  letter-spacing: 0.04em !important;
+  word-spacing: 0.08em !important;
+  line-height: 1.75 !important;
+}
+
+/* 3. Reduce Motion Overrides */
+.accessibility-reduce-motion * {
+  animation: none !important;
+  animation-delay: 0s !important;
+  animation-duration: 0s !important;
+  animation-iteration-count: 1 !important;
+  transition: none !important;
+  transition-delay: 0s !important;
+  transition-duration: 0s !important;
+  scroll-behavior: auto !important;
+}
+
+
