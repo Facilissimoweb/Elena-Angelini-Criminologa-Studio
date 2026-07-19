@@ -9,9 +9,11 @@ import {
   FileCheck2,
   Sliders,
   Send,
-  Sparkles
+  Sparkles,
+  Download
 } from 'lucide-react';
 import { Language } from '../types';
+import { jsPDF } from 'jspdf';
 
 interface ForensicCalculatorProps {
   lang: Language;
@@ -36,6 +38,7 @@ export default function ForensicCalculator({ lang, onNavigateToContact }: Forens
   const [phaseBreakdown, setPhaseBreakdown] = useState<{ name: string; percent: number }[]>([]);
   const [approxPriceMin, setApproxPriceMin] = useState<number>(500);
   const [approxPriceMax, setApproxPriceMax] = useState<number>(1200);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState<boolean>(false);
 
   // Translations
   const t = {
@@ -82,7 +85,9 @@ export default function ForensicCalculator({ lang, onNavigateToContact }: Forens
       phaseSponsor: "Asseverazione / Supporto Legale di Parte",
 
       ctaBtn: "Richiedi Preventivo e Studio Caso",
-      calcBtn: "Ricalcola Parametri"
+      calcBtn: "Ricalcola Parametri",
+      pdfBtn: "Scarica Preventivo PDF",
+      pdfGenerating: "Generazione PDF..."
     },
     en: {
       title: "Forensic Calculator & Complexity Estimator",
@@ -127,7 +132,9 @@ export default function ForensicCalculator({ lang, onNavigateToContact }: Forens
       phaseSponsor: "Sworn Validation & Legal Support",
 
       ctaBtn: "Request Quote & Case Review",
-      calcBtn: "Recalculate Parameters"
+      calcBtn: "Recalculate Parameters",
+      pdfBtn: "Download PDF Estimate",
+      pdfGenerating: "Generating PDF..."
     }
   };
 
@@ -245,6 +252,240 @@ export default function ForensicCalculator({ lang, onNavigateToContact }: Forens
   };
 
   const compDetails = getComplexityDetails(complexityScore);
+
+  const handleDownloadPDF = async () => {
+    setIsGeneratingPDF(true);
+    // Simulate slight analysis delay for a top-tier premium feeling
+    await new Promise((resolve) => setTimeout(resolve, 900));
+
+    try {
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const isIt = lang === 'it' || !lang;
+      let y = 50;
+
+      // 1. Header Banner Block
+      doc.setFillColor(15, 23, 42); // slate-900 background
+      doc.rect(0, 0, 210, 42, 'F');
+
+      // Title inside header
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(16);
+      doc.text("STUDIO CRIMINALISTICA ELENA ANGELINI", 15, 16);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.setTextColor(103, 232, 249); // cyan-300
+      doc.text(isIt ? "Criminologia, Criminalistica & Scienze Forensi" : "Criminology, Criminalistics & Forensic Sciences", 15, 23);
+
+      doc.setFontSize(8.5);
+      doc.setTextColor(148, 163, 184); // slate-400
+      doc.text(isIt ? "PREVENTIVO DI MASSIMA & STUDIO DI FATTIBILITÀ // DOCUMENTO FORENSE" : "PRELIMINARY ESTIMATE & FEASIBILITY REPORT // FORENSIC RECORD", 15, 29);
+
+      // Cyan accent line below banner
+      doc.setFillColor(6, 182, 212); // cyan-500
+      doc.rect(0, 41, 210, 1.2, 'F');
+
+      // Section Headings Helper
+      const addSectionHeading = (text: string) => {
+        if (y > 250) {
+          doc.addPage();
+          y = 20;
+        }
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.setTextColor(15, 23, 42); // slate-900
+        doc.text(text.toUpperCase(), 15, y);
+        y += 2.5;
+        doc.setDrawColor(6, 182, 212); // cyan accent line
+        doc.setLineWidth(0.4);
+        doc.line(15, y, 195, y);
+        y += 6;
+      };
+
+      // Key-Value Rows Helper
+      const addRow = (key: string, val: string, isAccent = false) => {
+        if (y > 270) {
+          doc.addPage();
+          y = 20;
+        }
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9);
+        doc.setTextColor(71, 85, 105); // slate-600
+        doc.text(key, 15, y);
+
+        doc.setFont('helvetica', isAccent ? 'bold' : 'normal');
+        doc.setFontSize(9);
+        if (isAccent) {
+          doc.setTextColor(13, 148, 136); // teal-600
+        } else {
+          doc.setTextColor(15, 23, 42); // slate-900
+        }
+        doc.text(val, 75, y);
+        y += 6;
+      };
+
+      // Map Type
+      const getExpertiseLabel = (type: ExpertiseType) => {
+        if (isIt) {
+          switch (type) {
+            case 'grafologia': return 'Perizia Grafologica / Verifica Scritture e Firme';
+            case 'balistica': return 'Balistica Forense & Ricostruzione Cinematica 3D';
+            case 'scena': return 'Analisi della Scena del Crimine & Ricostruzione 3D';
+            case 'digital': return 'Informatica Forense / Estrazione Evidenze Digitali';
+            case 'criminologia': return 'Consulenza Criminologica & Profiling Clinico';
+          }
+        } else {
+          switch (type) {
+            case 'grafologia': return 'Forensic Graphology & Signature Verification';
+            case 'balistica': return 'Forensic Ballistics & 3D Kinematics Tracking';
+            case 'scena': return 'Crime Scene Audit & Spatial 3D Reconstruction';
+            case 'digital': return 'Digital Forensics & Device Evidence Extractions';
+            case 'criminologia': return 'Criminological Assessment & Profiling';
+          }
+        }
+      };
+
+      // Map Role
+      const getRoleLabel = (role: 'ctp' | 'ctu' | 'stragiudiziale') => {
+        if (isIt) {
+          switch (role) {
+            case 'ctp': return 'Consulente Tecnico di Parte (C.T.P. Difesa Penale/Civile)';
+            case 'ctu': return "Consulente Tecnico d'Ufficio o Perito (C.T.U. del Tribunale)";
+            case 'stragiudiziale': return 'Parere Pro-Veritate o Consulenza Extra-Giudiziale';
+          }
+        } else {
+          switch (role) {
+            case 'ctp': return 'Defense Technical Expert Witness (C.T.P.)';
+            case 'ctu': return 'Court-Appointed Forensic Expert Witness (C.T.U.)';
+            case 'stragiudiziale': return 'Out-of-Court Opinion or Preliminary Counsel';
+          }
+        }
+      };
+
+      // Title & Date of Report
+      const currentDateString = new Date().toLocaleDateString(isIt ? 'it-IT' : 'en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(148, 163, 184); // slate-400
+      doc.text(`${isIt ? "DATA DI EMISSIONE:" : "DATE OF EMISSION:"} ${currentDateString}`, 15, y);
+      doc.text(`${isIt ? "RIF_CALCOLO_ID:" : "CALC_REF_ID:"} FSC-${Math.floor(Math.random() * 90000) + 10000}`, 155, y);
+      y += 8;
+
+      // Section 1: CASE PARAMETERS
+      addSectionHeading(isIt ? "1. Parametri Generali dell'Incarico" : "1. Request Scope & Parameters");
+      addRow(isIt ? "Tipo di Accertamento:" : "Investigation Focus:", getExpertiseLabel(expertiseType));
+      addRow(isIt ? "Quantità Reperti / Campioni:" : "Number of Samples/Specimens:", `${numItems} ${isIt ? "unità da esaminare" : "units for analysis"}`);
+      addRow(isIt ? "Ore Stimate Sopralluogo/Lab:" : "Estimated Site/Lab Hours:", `${surveyHours} ore`);
+      addRow(isIt ? "Inquadramento Giuridico:" : "Legal Framework:", getRoleLabel(roleType));
+      addRow(isIt ? "Grado di Urgenza richiesto:" : "Urgency Designation:", isUrgent ? (isIt ? "PRIORITARIO (7-10gg)" : "PRIORITY URGENT (7-10 days)") : (isIt ? "Standard (Tempi Ordinari)" : "Standard (Regular)"));
+      y += 4;
+
+      // Section 2: QUANTITATIVE COMPONENT
+      addSectionHeading(isIt ? "2. Valutazione Empirica della Complessità" : "2. Algorithmic Complexity Metrics");
+      addRow(isIt ? "Indice di Complessità:" : "Complexity Index Score:", `${complexityScore}% - ${compDetails.text}`, true);
+      addRow(isIt ? "Tempi Presunti di Consegna:" : "Expected Working Turnaround:", `~ ${estimatedDays} ${isIt ? "Giorni lavorativi dal deposito atti" : "Business days from file deposit"}`);
+      y += 4;
+
+      // Section 3: STIMA DEGLI ONORARI
+      addSectionHeading(isIt ? "3. Orientamento Onorario & Progetto Economico" : "3. Fees & Financial Orientation");
+      addRow(
+        isIt ? "Fascia d'Onorario Prevista:" : "Indicative Fee Range:", 
+        `EUR ${approxPriceMin},00  -  EUR ${approxPriceMax},00`, 
+        true
+      );
+      
+      // Paragraph for disclaimer
+      doc.setFont('helvetica', 'italic');
+      doc.setFontSize(8);
+      doc.setTextColor(100, 116, 139); // slate-500
+      const descLines = doc.splitTextToSize(
+        isIt 
+          ? "Nota esplicativa: La stima sopraindicata è elaborata matematicamente in conformità ai parametri ministeriali di settore (Prefettura / Tariffe Forensi) ed è puramente orientativa. Non costituisce vincolo contrattuale formale. Il preventivo definitivo e vincolante viene rilasciato esclusivamente previa disamina del fascicolo o dei reperti originali in sede di colloquio conoscitivo."
+          : "Explanatory note: The estimate above is mathematically processed in compliance with national and Prefettura regulations for forensic consultations. It is strictly informational and does not constitute a legal contract. A final binding quote is issued exclusively following detailed examination of physical files or original artifacts during consultation.",
+        180
+      );
+      doc.text(descLines, 15, y);
+      y += (descLines.length * 3.8) + 6;
+
+      // Section 4: LABOUR DISTRIBUTION
+      addSectionHeading(isIt ? "4. Ripartizione del Carico di Lavoro Scientifico" : "4. Scientific Effort Phase Breakdown");
+      phaseBreakdown.forEach((phase) => {
+        addRow(phase.name, `${phase.percent}%`);
+      });
+      y += 6;
+
+      // Contact block
+      if (y > 220) {
+        doc.addPage();
+        y = 20;
+      }
+
+      // Add a border block for the Studio Info at the bottom
+      doc.setFillColor(248, 250, 252); // slate-50 background
+      doc.setDrawColor(226, 232, 240); // slate-200 border
+      doc.rect(15, y, 180, 24, 'FD');
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      doc.setTextColor(15, 23, 42); // slate-900
+      doc.text("STUDIO CRIMINALISTICA ELENA ANGELINI", 18, y + 5);
+      
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7.5);
+      doc.setTextColor(100, 116, 139); // slate-500
+      doc.text(isIt ? "Sede Legale & Laboratorio: Arbor Vitae, Via Fabio Filzi 9 - 47923 Rimini, ITALY" : "Offices & Forensic Lab: Arbor Vitae, Via Fabio Filzi 9 - 47923 Rimini, ITALY", 18, y + 10);
+      doc.text("Email: info@studiocriminalistica.it  |  Web: www.studiocriminalistica.it  |  Tel: +39 366 1236464", 18, y + 14);
+      doc.text(isIt ? "Presidio Tecnico d'Emergenza Attivo H24 // Massima Riservatezza Professionale" : "H24 Emergency Technical Unit Active // Professional Confidentiality", 18, y + 18);
+
+      // Signatures
+      y += 34;
+      if (y > 275) {
+        doc.addPage();
+        y = 30;
+      }
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7.5);
+      doc.setTextColor(148, 163, 184); // slate-400
+      doc.text(isIt ? "Per Ricevuta e Presa Visione (Il Cliente)" : "For Receipt & Aknowledgement (The Client)", 15, y);
+      doc.text(isIt ? "Firma della Criminologa Elena Angelini" : "Elena Angelini, Lead Criminologist Signature", 125, y);
+
+      doc.setDrawColor(203, 213, 225); // slate-300
+      doc.line(15, y + 10, 65, y + 10);
+      doc.line(125, y + 10, 185, y + 10);
+
+      // Add footers on all pages
+      const pageCount = doc.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setDrawColor(226, 232, 240); // slate-200
+        doc.setLineWidth(0.3);
+        doc.line(15, 282, 195, 282);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.setTextColor(148, 163, 184); // slate-400
+        doc.text(isIt ? "STRETTAMENTE RISERVATO & CONFIDENZIALE // PREVENTIVO CASO" : "STRICTLY CONFIDENTIAL & PRIVILEGED // CASE SPECIFIC ESTIMATE", 15, 287);
+        doc.text(`Page ${i} of ${pageCount}`, 180, 287);
+      }
+
+      doc.save(`Studio_Angelini_Preventivo_FSC-${Math.floor(Math.random() * 90000) + 10000}.pdf`);
+    } catch (err) {
+      console.error("Failed to generate and download PDF:", err);
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
 
   return (
     <div id="forensic-calculator-component" className="rounded-xl border border-slate-900/60 bg-gradient-to-b from-slate-950 to-slate-900/50 p-6 md:p-8 space-y-6 text-left relative overflow-hidden shadow-2xl">
@@ -485,12 +726,24 @@ export default function ForensicCalculator({ lang, onNavigateToContact }: Forens
 
           </div>
 
-          {/* Action Trigger Button */}
-          <div className="pt-4 border-t border-slate-900/60">
+          {/* Action Trigger Buttons */}
+          <div className="pt-4 border-t border-slate-900/60 flex flex-col sm:flex-row gap-3">
             <button
+              type="button"
+              onClick={handleDownloadPDF}
+              disabled={isGeneratingPDF}
+              id="calc-pdf-download"
+              className="flex-1 bg-slate-900 hover:bg-slate-800 border border-cyan-500/30 hover:border-cyan-500/60 text-cyan-400 disabled:text-slate-500 disabled:border-slate-800 font-mono font-extrabold text-xs uppercase tracking-wider py-3.5 rounded transition-all cursor-pointer flex items-center justify-center space-x-2 shadow-lg active:scale-95 disabled:pointer-events-none"
+            >
+              <Download className={`w-4 h-4 ${isGeneratingPDF ? 'animate-bounce' : ''}`} />
+              <span>{isGeneratingPDF ? active.pdfGenerating : active.pdfBtn}</span>
+            </button>
+
+            <button
+              type="button"
               onClick={onNavigateToContact}
               id="calc-cta-submit"
-              className="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-mono font-extrabold text-xs uppercase tracking-wider py-3.5 rounded transition-all cursor-pointer flex items-center justify-center space-x-2 shadow-lg shadow-cyan-500/10 hover:shadow-cyan-500/20 active:scale-95"
+              className="flex-1 bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-mono font-extrabold text-xs uppercase tracking-wider py-3.5 rounded transition-all cursor-pointer flex items-center justify-center space-x-2 shadow-lg shadow-cyan-500/10 hover:shadow-cyan-500/20 active:scale-95"
             >
               <Send className="w-4 h-4 text-slate-950" />
               <span>{active.ctaBtn}</span>
