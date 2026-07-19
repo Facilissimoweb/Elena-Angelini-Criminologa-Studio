@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { Language, servicesData, translations } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
+import ForensicCalculator from './ForensicCalculator';
 
 interface ServicesProps {
   lang: Language;
@@ -717,6 +718,11 @@ export default function Services({ lang, onNavigateToContact }: ServicesProps) {
           </p>
         </div>
       )}
+
+      {/* FORENSIC CALCULATOR ESTIMATOR */}
+      <div className="pt-6">
+        <ForensicCalculator lang={lang} onNavigateToContact={onNavigateToContact} />
+      </div>
 
       {/* Strategic CTA Callout */}
       <div className="bg-slate-950/40 border border-slate-900 p-6 md:p-8 rounded-xl flex flex-col md:flex-row justify-between items-center gap-6 text-left relative overflow-hidden scanlines">
