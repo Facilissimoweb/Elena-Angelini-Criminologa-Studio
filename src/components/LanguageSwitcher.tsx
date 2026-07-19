@@ -46,25 +46,31 @@ export default function LanguageSwitcher({ onLanguageChangeExternal }: LanguageS
 
   // 2. Inizializzazione dinamica di Google Translate
   useEffect(() => {
-    // Controlla se lo script è già stato caricato o se l'oggetto google è pronto
-    const alreadyExists = !!document.querySelector('script[src*="translate.google.com"]') || !!(window as any).google?.translate;
-
-    if (!alreadyExists) {
-      // Definisce la callback globale richiamata dallo script di Google
-      (window as any).googleTranslateElementInit = () => {
-        try {
-          if ((window as any).google && (window as any).google.translate) {
+    // Definisce la callback globale richiamata dallo script di Google
+    const initTranslate = () => {
+      try {
+        if ((window as any).google && (window as any).google.translate) {
+          // Verifica se è presente l'elemento prima di inizializzare
+          const container = document.getElementById('google_translate_element');
+          if (container && container.innerHTML === '') {
             new (window as any).google.translate.TranslateElement({
               pageLanguage: 'it', // La lingua nativa del codice HTML del tuo sito
               layout: (window as any).google.translate.TranslateElement.InlineLayout.SIMPLE,
               autoDisplay: false
             }, 'google_translate_element');
           }
-        } catch (err) {
-          console.warn("Failed to initialize Google Translate element:", err);
         }
-      };
+      } catch (err) {
+        console.warn("Failed to initialize Google Translate element:", err);
+      }
+    };
 
+    (window as any).googleTranslateElementInit = initTranslate;
+
+    // Se l'oggetto google è già disponibile, inizializziamo direttamente
+    if ((window as any).google?.translate) {
+      initTranslate();
+    } else {
       // Carica dinamicamente lo script di Google Translate se non è già presente
       const id = 'google-translate-script';
       if (!document.getElementById(id)) {
@@ -155,6 +161,9 @@ export default function LanguageSwitcher({ onLanguageChangeExternal }: LanguageS
         </span>
         <ChevronDown className={`h-3 w-3 text-slate-500 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
       </button>
+
+      {/* Elemento contenitore di Google Translate Nascosto (OBBLIGATORIO) */}
+      <div id="google_translate_element" className="absolute opacity-0 pointer-events-none h-0 w-0 overflow-hidden" />
 
       {/* Menu a discesa personalizzato delle Lingue */}
       {dropdownOpen && (

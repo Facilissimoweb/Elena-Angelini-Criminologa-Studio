@@ -157,7 +157,7 @@ Instructions:
     } catch (error: any) {
       console.error("Critical Chat Proxy Error:", error);
       res.status(200).json({ 
-        reply: "Spiacenti, si è verificato un errore temporaneo nel sistema di comunicazione sicura dello studio. La preghiamo di riprovare o di compilare il modulo di contatto per fissare direttamente il colloquio conoscitivo gratuito." 
+        reply: `Spiacenti, si è verificato un errore temporaneo nel sistema di comunicazione sicura dello studio. Dettagli errore: ${error.message || error}` 
       });
     }
   });

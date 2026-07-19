@@ -62,11 +62,12 @@ export default function ForensicChat({ lang }: ForensicChatProps) {
       } else {
         throw new Error(data.error || 'Server error');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Chat Error:", error);
+      const errMsg = error?.message || String(error);
       const errReply = lang === 'it'
-        ? "Spiacenti, si è verificato un errore di connessione sicura con il nostro server forense. La preghiamo di riprovare o di utilizzare il modulo di prenotazione."
-        : "Sorry, a secure connection error occurred with our forensic server. Please try again or use our standard booking form.";
+        ? `Spiacenti, si è verificato un errore di connessione sicura con il nostro server forense.\nDettagli tecnici: ${errMsg}`
+        : `Sorry, a secure connection error occurred with our forensic server.\nTechnical details: ${errMsg}`;
       setMessages((prev) => [...prev, { role: 'assistant', content: errReply }]);
     } finally {
       setIsLoading(false);
