@@ -48,7 +48,7 @@ export default function ForensicChat({ lang }: ForensicChatProps) {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/chat', {
+      const response = await fetch('/api/forensic-chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

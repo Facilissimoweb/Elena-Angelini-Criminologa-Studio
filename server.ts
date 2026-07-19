@@ -13,7 +13,7 @@ async function startServer() {
   app.use(express.json());
 
   // API Route: chat proxy to Groq (with Gemini and Mock fallback to bypass any potential 404/errors)
-  app.post("/api/chat", async (req, res) => {
+  app.post("/api/forensic-chat", async (req, res) => {
     try {
       const { messages } = req.body;
       if (!messages || !Array.isArray(messages)) {
