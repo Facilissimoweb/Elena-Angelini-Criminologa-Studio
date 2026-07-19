@@ -20,6 +20,19 @@ type TransmissionStep = 'idle' | 'encrypting' | 'routing' | 'done';
 
 export default function ContactForm({ lang, triggerToast }: ContactFormProps) {
   const t = translations[lang];
+
+  const renderDoubleColor = (text: string) => {
+    if (!text) return '';
+    const words = text.split(' ');
+    if (words.length <= 1) return text;
+    const mid = words.length <= 2 ? 1 : Math.ceil(words.length * 0.5);
+    return (
+      <>
+        <span className="text-slate-100">{words.slice(0, mid).join(' ')}</span>{' '}
+        <span className="text-cold-400 font-extrabold">{words.slice(mid).join(' ')}</span>
+      </>
+    );
+  };
   
   const [formData, setFormData] = useState<FormState>({
     name: '',
@@ -92,8 +105,8 @@ export default function ContactForm({ lang, triggerToast }: ContactFormProps) {
             <span className="text-cold-400 font-mono text-xs uppercase tracking-widest font-semibold bg-cold-500/10 px-3 py-1 rounded border border-cold-500/10">
               // {t['badge-contacts']}
             </span>
-            <h3 className="text-3xl font-bold font-serif text-slate-100">
-              {t['p5-title']}
+            <h3 className="text-3xl font-bold font-serif">
+              {renderDoubleColor(t['p5-title'])}
             </h3>
             <p className="text-slate-400 text-xs md:text-sm leading-relaxed">
               {t['p5-desc']}

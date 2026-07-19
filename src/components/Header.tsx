@@ -208,11 +208,16 @@ export default function Header({
                       key={item.id}
                       id={`mobile-nav-${item.id}`}
                       onClick={() => handleNav(item.id)}
-                      className={`text-left py-1.5 border-b border-slate-900/40 transition-colors duration-150 uppercase ${
-                        isActive ? 'text-cold-400 font-bold' : 'text-slate-400 hover:text-slate-200'
+                      className={`text-left px-4 py-2.5 rounded-xl transition-all duration-150 uppercase tracking-wide text-xs flex items-center justify-between border-l-4 ${
+                        isActive
+                          ? 'bg-cold-500/10 border-cold-400 text-cold-400 font-bold shadow-sm shadow-cold-500/5'
+                          : 'bg-transparent border-transparent text-slate-400 hover:bg-slate-900/30 hover:text-slate-200'
                       }`}
                     >
-                      {t[item.labelKey]?.toUpperCase()}
+                      <span>{t[item.labelKey]?.toUpperCase()}</span>
+                      {isActive && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-cold-400 animate-pulse shrink-0" />
+                      )}
                     </button>
                   );
                 })}

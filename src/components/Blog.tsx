@@ -322,6 +322,20 @@ interface BlogProps {
 
 export default function Blog({ lang, onNavigateToContact }: BlogProps) {
   const contentLang = lang === 'it' ? 'it' : 'en';
+
+  const renderDoubleColor = (text: string) => {
+    if (!text) return '';
+    const words = text.split(' ');
+    if (words.length <= 1) return text;
+    const mid = words.length <= 2 ? 1 : Math.ceil(words.length * 0.5);
+    return (
+      <>
+        <span className="text-slate-100">{words.slice(0, mid).join(' ')}</span>{' '}
+        <span className="text-cold-400 font-extrabold">{words.slice(mid).join(' ')}</span>
+      </>
+    );
+  };
+
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
@@ -450,8 +464,8 @@ export default function Blog({ lang, onNavigateToContact }: BlogProps) {
             <span className="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-pulse" />
             <span>{lang === 'it' ? 'ARCHIVIO PUBBLICAZIONI' : 'PUBLICATION ARCHIVE'}</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-serif font-bold text-slate-100 tracking-tight">
-            {lang === 'it' ? 'Forensic Insight & News' : 'Forensic Insights & News'}
+          <h1 className="text-xl md:text-2xl font-serif font-bold tracking-tight">
+            {renderDoubleColor(lang === 'it' ? 'Forensic Insight & News' : 'Forensic Insights & News')}
           </h1>
           <p className="text-xs text-slate-400 leading-relaxed max-w-xl">
             {lang === 'it' 
@@ -735,8 +749,8 @@ export default function Blog({ lang, onNavigateToContact }: BlogProps) {
               </div>
 
               {/* Title */}
-              <h1 className="text-xl md:text-2xl font-serif font-bold text-slate-100 tracking-tight leading-tight text-left">
-                {selectedPost?.title[contentLang]}
+              <h1 className="text-xl md:text-2xl font-serif font-bold tracking-tight leading-tight text-left">
+                {selectedPost && renderDoubleColor(selectedPost.title[contentLang])}
               </h1>
 
               {/* Big blockquote / excerpt */}

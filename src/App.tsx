@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import Header from './components/Header';
+import Breadcrumbs from './components/Breadcrumbs';
+import PageProgressBar from './components/PageProgressBar';
 import Hero from './components/Hero';
 import Fora3D from './components/Fora3D';
 import Services from './components/Services';
@@ -100,6 +102,16 @@ export default function App() {
 
       {/* Main Single Page App Content Area with Page Router Transitions */}
       <main className="flex-grow max-w-6xl w-full mx-auto px-4 py-8 relative">
+        {/* Subtle page transition progress bar */}
+        <PageProgressBar currentPage={currentPage} />
+
+        {/* Dynamic Breadcrumbs above main page contents */}
+        <Breadcrumbs
+          lang={lang}
+          currentPage={currentPage}
+          setCurrentPage={handlePageChange}
+        />
+
         <AnimatePresence mode="wait">
           <motion.div
             key={currentPage}

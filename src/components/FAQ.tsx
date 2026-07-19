@@ -156,6 +156,20 @@ const genericServicesFaqData: FAQItem[] = [
 
 export default function FAQ({ lang, onNavigateToContact, isGenericOnly = false }: FAQProps) {
   const t = translations[lang];
+
+  const renderDoubleColor = (text: string) => {
+    if (!text) return '';
+    const words = text.split(' ');
+    if (words.length <= 1) return text;
+    const mid = words.length <= 2 ? 1 : Math.ceil(words.length * 0.5);
+    return (
+      <>
+        <span className="text-slate-100">{words.slice(0, mid).join(' ')}</span>{' '}
+        <span className="text-cold-400 font-extrabold">{words.slice(mid).join(' ')}</span>
+      </>
+    );
+  };
+
   const [searchQuery, setSearchQuery] = useState('');
   const [openId, setOpenId] = useState<string | null>(null);
 
@@ -182,10 +196,11 @@ export default function FAQ({ lang, onNavigateToContact, isGenericOnly = false }
           <HelpCircle className="w-3.5 h-3.5 text-cold-400" />
           <span>// {t['nav-faq'] || 'FAQ'}</span>
         </div>
-        <h3 className="text-3xl md:text-4xl font-bold font-serif text-slate-100">
-          {isGenericOnly 
+        <h3 className="text-3xl md:text-4xl font-bold font-serif">
+          {renderDoubleColor(isGenericOnly 
             ? (lang === 'it' ? 'Domande Frequenti sui Servizi' : 'Frequently Asked Questions on Services')
-            : (lang === 'it' ? 'Domande Frequenti Forensi' : 'Forensic Frequently Asked Questions')}
+            : (lang === 'it' ? 'Domande Frequenti Forensi' : 'Forensic Frequently Asked Questions')
+          )}
         </h3>
         <p className="text-slate-400 text-sm md:text-base leading-relaxed">
           {isGenericOnly

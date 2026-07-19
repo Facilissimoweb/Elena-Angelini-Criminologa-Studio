@@ -11,6 +11,19 @@ interface HeroProps {
 export default function Hero({ lang, onExploreServices, openBooking }: HeroProps) {
   const t = translations[lang];
 
+  const renderDoubleColor = (text: string) => {
+    if (!text) return '';
+    const words = text.split(' ');
+    if (words.length <= 1) return text;
+    const mid = words.length <= 2 ? 1 : Math.ceil(words.length * 0.5);
+    return (
+      <>
+        <span className="text-slate-100">{words.slice(0, mid).join(' ')}</span>{' '}
+        <span className="text-cold-400 font-extrabold">{words.slice(mid).join(' ')}</span>
+      </>
+    );
+  };
+
   return (
     <section className="space-y-10 py-6 text-left">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -31,9 +44,9 @@ export default function Hero({ lang, onExploreServices, openBooking }: HeroProps
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-serif leading-tight text-slate-100"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-serif leading-tight"
           >
-            {t['p1-title']}
+            {renderDoubleColor(t['p1-title'])}
           </motion.h2>
 
           <motion.p

@@ -17,6 +17,19 @@ interface TestimonialsProps {
 export default function Testimonials({ lang, openBooking }: TestimonialsProps) {
   const t = translations[lang];
 
+  const renderDoubleColor = (text: string) => {
+    if (!text) return '';
+    const words = text.split(' ');
+    if (words.length <= 1) return text;
+    const mid = words.length <= 2 ? 1 : Math.ceil(words.length * 0.5);
+    return (
+      <>
+        <span className="text-slate-100">{words.slice(0, mid).join(' ')}</span>{' '}
+        <span className="text-cold-400 font-extrabold">{words.slice(mid).join(' ')}</span>
+      </>
+    );
+  };
+
   return (
     <section className="space-y-10 py-6">
       
@@ -25,8 +38,8 @@ export default function Testimonials({ lang, openBooking }: TestimonialsProps) {
         <div className="inline-flex items-center space-x-2 bg-cold-500/10 border border-cold-500/20 text-cold-400 font-mono text-xs uppercase tracking-widest px-3 py-1.5 rounded">
           <span>// {t['badge-testimonials']}</span>
         </div>
-        <h3 className="text-3xl md:text-4xl font-bold font-serif text-slate-100">
-          {t['p4-title']}
+        <h3 className="text-3xl md:text-4xl font-bold font-serif">
+          {renderDoubleColor(t['p4-title'])}
         </h3>
         <p className="text-slate-400 text-sm md:text-base leading-relaxed">
           {t['p4-desc']}

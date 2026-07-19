@@ -214,6 +214,19 @@ export default function AboutUs({ lang, onNavigateToContact }: AboutUsProps) {
   const t = localTranslations[lang] || localTranslations['it'];
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
+  const renderDoubleColor = (text: string) => {
+    if (!text) return '';
+    const words = text.split(' ');
+    if (words.length <= 1) return text;
+    const mid = words.length <= 2 ? 1 : Math.ceil(words.length * 0.5);
+    return (
+      <>
+        <span className="text-slate-100">{words.slice(0, mid).join(' ')}</span>{' '}
+        <span className="text-cold-400 font-extrabold">{words.slice(mid).join(' ')}</span>
+      </>
+    );
+  };
+
   const handleDownloadPDF = async () => {
     setIsGeneratingPDF(true);
     // Short delay to simulate compilation / loading feedback state for top-tier feeling
@@ -408,8 +421,8 @@ export default function AboutUs({ lang, onNavigateToContact }: AboutUsProps) {
             <span>{t.badge}</span>
           </div>
           
-          <h2 className="font-serif text-3xl md:text-5xl font-extrabold text-slate-100 tracking-tight leading-tight">
-            Elena Angelini
+          <h2 className="font-serif text-3xl md:text-5xl font-extrabold tracking-tight leading-tight">
+            {renderDoubleColor("Elena Angelini")}
           </h2>
           <p className="font-mono text-sm md:text-base text-cold-400 uppercase tracking-widest max-w-2xl border-l-2 border-cold-500/60 pl-4 py-1">
             {t.title}
@@ -525,8 +538,8 @@ export default function AboutUs({ lang, onNavigateToContact }: AboutUsProps) {
       <section className="space-y-6">
         <div className="text-left max-w-3xl">
           <span className="font-mono text-[9px] uppercase tracking-widest text-cold-400">// SCIENTIFIC_PROTOCOL</span>
-          <h3 className="text-xl md:text-2xl font-serif font-extrabold text-slate-100 mt-1 uppercase tracking-wide">
-            {t.howTitle}
+          <h3 className="text-xl md:text-2xl font-serif font-extrabold mt-1 uppercase tracking-wide">
+            {renderDoubleColor(t.howTitle)}
           </h3>
           <p className="text-xs font-mono text-slate-400 mt-2">
             {t.howSubtitle}
@@ -565,8 +578,8 @@ export default function AboutUs({ lang, onNavigateToContact }: AboutUsProps) {
               <Network className="w-4 h-4 text-cyan-400" />
               <span>STATION_SYS // GROWING_CONSULTANT_INDEX</span>
             </div>
-            <h3 className="text-xl md:text-2xl font-serif font-extrabold text-slate-100 uppercase tracking-wide">
-              {t.networkTitle}
+            <h3 className="text-xl md:text-2xl font-serif font-extrabold uppercase tracking-wide">
+              {renderDoubleColor(t.networkTitle)}
             </h3>
             <p className="text-xs text-slate-400">
               {t.networkSubtitle}
