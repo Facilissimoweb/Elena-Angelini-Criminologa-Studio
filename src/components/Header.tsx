@@ -208,11 +208,11 @@ export default function Header({
                       key={item.id}
                       id={`mobile-nav-${item.id}`}
                       onClick={() => handleNav(item.id)}
-                      className={`text-left py-1.5 border-b border-slate-900/40 transition-colors duration-150 ${
+                      className={`text-left py-1.5 border-b border-slate-900/40 transition-colors duration-150 uppercase ${
                         isActive ? 'text-cold-400 font-bold' : 'text-slate-400 hover:text-slate-200'
                       }`}
                     >
-                      {t[item.labelKey]}
+                      {t[item.labelKey]?.toUpperCase()}
                     </button>
                   );
                 })}
@@ -221,7 +221,7 @@ export default function Header({
               {/* TRANSLATION SWITCHER INSERTED EXCLUSIVELY HERE */}
               <div className="py-2.5 border-b border-slate-900/40 flex items-center justify-between">
                 <span className="text-xs font-poppins font-medium uppercase tracking-wider text-slate-400">
-                  {lang === 'it' ? 'Seleziona Lingua' : 'Select Language'}
+                  {(lang === 'it' ? 'Seleziona Lingua' : 'Select Language').toUpperCase()}
                 </span>
                 <LanguageSwitcher onLanguageChangeExternal={(langCode) => {
                   const appCode = langCode === 'zh-CN' ? 'zh' : langCode;
