@@ -38,10 +38,22 @@ export default function App() {
   const [toastTitle, setToastTitle] = useState('');
   const [toastMessage, setToastMessage] = useState('');
 
+  // Contact prefill state for linear service-to-contact routing
+  const [contactPrefill, setContactPrefill] = useState<{ subject?: string; message?: string } | null>(null);
+
   const triggerToast = (title: string, message: string) => {
     setToastTitle(title);
     setToastMessage(message);
     setToastOpen(true);
+  };
+
+  const handleNavigateToContact = (prefill?: { subject?: string; message?: string }) => {
+    if (prefill) {
+      setContactPrefill(prefill);
+    } else {
+      setContactPrefill(null);
+    }
+    handlePageChange('contatti');
   };
 
   // Synchronize browser URL hash with current active page
@@ -270,7 +282,7 @@ export default function App() {
             {currentPage === 'servizi' && (
               <Services
                 lang={lang}
-                onNavigateToContact={() => handlePageChange('contatti')}
+                onNavigateToContact={handleNavigateToContact}
               />
             )}
 
@@ -292,6 +304,8 @@ export default function App() {
               <ContactForm
                 lang={lang}
                 triggerToast={triggerToast}
+                prefill={contactPrefill}
+                clearPrefill={() => setContactPrefill(null)}
               />
             )}
 

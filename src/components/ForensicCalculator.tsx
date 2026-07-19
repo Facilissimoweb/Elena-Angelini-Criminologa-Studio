@@ -17,7 +17,7 @@ import { jsPDF } from 'jspdf';
 
 interface ForensicCalculatorProps {
   lang: Language;
-  onNavigateToContact: () => void;
+  onNavigateToContact: (prefill?: { subject?: string; message?: string }) => void;
 }
 
 type ExpertiseType = 'grafologia' | 'balistica' | 'scena' | 'digital' | 'criminologia';
@@ -487,6 +487,80 @@ export default function ForensicCalculator({ lang, onNavigateToContact }: Forens
     }
   };
 
+  const getExpertiseLabel = (type: ExpertiseType) => {
+    const labels = {
+      grafologia: isIt ? 'Perizia Grafologica (Lettere/Testamenti)' : 'Handwriting Analysis',
+      balistica: isIt ? 'Ricostruzione Balistica 3D' : '3D Ballistic Reconstruction',
+      scena: isIt ? 'Analisi Scena del Crimine & BPA' : 'Crime Scene & BPA Analysis',
+      digital: isIt ? 'Digital Forensics (IP/CCTV/Chiamate)' : 'Digital Forensics',
+      criminologia: isIt ? 'Profilo Criminologico & Mobbing' : 'Criminological & Mobbing Profiling'
+    };
+    return labels[type];
+  };
+
+  const getRoleLabel = (role: 'ctp' | 'ctu' | 'stragiudiziale') => {
+    const labels = {
+      ctp: isIt ? 'Consulente Tecnico di Parte (Difesa/Privato)' : 'Party Technical Consultant (Defense)',
+      ctu: isIt ? 'Consulente d\'Ufficio / Supporto Magistratura' : 'Court Appointed Expert',
+      stragiudiziale: isIt ? 'Studio Stragiudiziale / Parere Preventivo' : 'Extrajudicial Feasibility Study'
+    };
+    return labels[role];
+  };
+
+  const handleRequestQuote = () => {
+    const expLabel = getExpertiseLabel(expertiseType);
+    const roleLabel = getRoleLabel(roleType);
+    const urgencyLabel = isUrgent 
+      ? (isIt ? 'SI - ALTA URGENZA' : 'YES - HIGH URGENCY')
+      : (isIt ? 'No (Tempistiche Standard)' : 'No (Standard Timelines)');
+    
+    const subjectText = isIt 
+      ? `Studio Caso: ${expLabel}` 
+      : `Case Review Request: ${expLabel}`;
+
+    const messageText = isIt 
+      ? `Salve Studio Criminalistica Elena Angelini,
+
+Ho appena utilizzato lo strumento di stima e calcolo forense per inquadrare i dettagli preliminari del mio caso. Desidero richiedere una consulenza e lo studio di fattibilità per la seguente situazione:
+
+[PARAMETRI ACCERTAMENTO FORENSE]
+- Tipologia di Indagine: ${expLabel}
+- Inquadramento Procedurale: ${roleLabel}
+- Campioni/Reperti da Analizzare: ${numItems} unità
+- Ore di Ispezione/Sopralluogo: ${surveyHours} ore stimate
+- Stato di Urgenza: ${urgencyLabel}
+
+[STIMA GENERATA DA CALCOLATRICE]
+- Indice di Complessità Stimato: ${complexityScore}%
+- Tempi di Consegna Previsti: ~${estimatedDays} giorni lavorativi
+- Budget Orientativo: €${approxPriceMin} - €${approxPriceMax} (stima di massima)
+
+Desidero concordare un colloquio conoscitivo per approfondire il caso in massima riservatezza.
+
+Cordiali saluti.`
+      : `Dear Elena Angelini Criminalistics Studio,
+
+I have just utilized your interactive Forensic Calculator to draft the preliminary parameters for my legal case. I would like to request an official consultation and feasibility analysis for this setup:
+
+[FORENSIC ESTIMATOR CONFIGURATION]
+- Investigation Segment: ${expLabel}
+- Procedural Framework: ${roleLabel}
+- Sample Evidence Pieces: ${numItems} items
+- Inspection/Lab Hours: ${surveyHours} estimated hours
+- High Urgency: ${urgencyLabel}
+
+[ALGORITHMIC SUMMARY]
+- Complexity Score: ${complexityScore}%
+- Delivery Times: ~${estimatedDays} business days
+- Budget Guideline: €${approxPriceMin} - €${approxPriceMax} (indicative estimate)
+
+Please contact me to schedule a confidential preliminary review.
+
+Best regards.`;
+
+    onNavigateToContact({ subject: subjectText, message: messageText });
+  };
+
   return (
     <div id="forensic-calculator-component" className="rounded-xl border border-slate-900/60 bg-gradient-to-b from-slate-950 to-slate-900/50 p-6 md:p-8 space-y-6 text-left relative overflow-hidden shadow-2xl">
       {/* Absolute Tech Elements */}
@@ -741,7 +815,7 @@ export default function ForensicCalculator({ lang, onNavigateToContact }: Forens
 
             <button
               type="button"
-              onClick={onNavigateToContact}
+              onClick={handleRequestQuote}
               id="calc-cta-submit"
               className="flex-1 bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-mono font-extrabold text-xs uppercase tracking-wider py-3.5 rounded transition-all cursor-pointer flex items-center justify-center space-x-2 shadow-lg shadow-cyan-500/10 hover:shadow-cyan-500/20 active:scale-95"
             >

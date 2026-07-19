@@ -1,4 +1,4 @@
-import { useState, FormEvent, ChangeEvent } from 'react';
+import { useState, useEffect, FormEvent, ChangeEvent } from 'react';
 import { Lock, Loader2, CheckCircle, Send, ShieldCheck } from 'lucide-react';
 import { Language, translations } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
@@ -6,6 +6,8 @@ import { motion, AnimatePresence } from 'motion/react';
 interface ContactFormProps {
   lang: Language;
   triggerToast: (title: string, message: string) => void;
+  prefill?: { subject?: string; message?: string } | null;
+  clearPrefill?: () => void;
 }
 
 interface FormState {
@@ -18,7 +20,7 @@ interface FormState {
 
 type TransmissionStep = 'idle' | 'encrypting' | 'routing' | 'done';
 
-export default function ContactForm({ lang, triggerToast }: ContactFormProps) {
+export default function ContactForm({ lang, triggerToast, prefill, clearPrefill }: ContactFormProps) {
   const t = translations[lang];
 
   const renderDoubleColor = (text: string) => {
@@ -41,6 +43,25 @@ export default function ContactForm({ lang, triggerToast }: ContactFormProps) {
     message: '',
     privacy: false,
   });
+
+  // Apply prefill context from selected services, methodologies, or calculator
+  useEffect(() => {
+    if (prefill && prefill.message) {
+      setFormData((prev) => ({
+        ...prev,
+        message: prefill.message || '',
+      }));
+    }
+  }, [prefill]);
+
+  // Clean up prefill state on unmount so subsequent direct contacts are clean
+  useEffect(() => {
+    return () => {
+      if (clearPrefill) {
+        clearPrefill();
+      }
+    };
+  }, [clearPrefill]);
 
   const [txStep, setTxStep] = useState<TransmissionStep>('idle');
   const [txProgress, setTxProgress] = useState<number>(0);

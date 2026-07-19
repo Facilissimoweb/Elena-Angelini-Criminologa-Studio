@@ -13,7 +13,8 @@ import {
   X,
   FileCheck2,
   BookmarkCheck,
-  CheckCircle2
+  CheckCircle2,
+  Send
 } from 'lucide-react';
 import { Language, servicesData, translations } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
@@ -21,7 +22,7 @@ import ForensicCalculator from './ForensicCalculator';
 
 interface ServicesProps {
   lang: Language;
-  onNavigateToContact: () => void;
+  onNavigateToContact: (prefill?: { subject?: string; message?: string }) => void;
 }
 
 const iconMap = {
@@ -564,18 +565,44 @@ export default function Services({ lang, onNavigateToContact }: ServicesProps) {
                           transition={{ duration: 0.2 }}
                           className="overflow-hidden"
                         >
-                          <div className="pt-4 mt-4 border-t border-slate-900/60 space-y-2 text-left">
-                            <span className="text-[9px] font-mono text-cyan-400/80 block uppercase tracking-wider mb-2">
-                              // SPECIFICHE DI PROTOCOLLO:
-                            </span>
-                            <ul className="space-y-2">
-                              {details.map((point, idx) => (
-                                <li key={idx} className="text-xs text-slate-300 flex items-start space-x-2">
-                                  <span className="text-cold-400 mt-1 flex-shrink-0">▪</span>
-                                  <span className="leading-normal">{point}</span>
-                                </li>
-                              ))}
-                            </ul>
+                          <div className="pt-4 mt-4 border-t border-slate-900/60 space-y-4 text-left">
+                            <div>
+                              <span className="text-[9px] font-mono text-cyan-400/80 block uppercase tracking-wider mb-2">
+                                // SPECIFICHE DI PROTOCOLLO:
+                              </span>
+                              <ul className="space-y-2">
+                                {details.map((point, idx) => (
+                                  <li key={idx} className="text-xs text-slate-300 flex items-start space-x-2">
+                                    <span className="text-cold-400 mt-1 flex-shrink-0">▪</span>
+                                    <span className="leading-normal">{point}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+
+                            {/* Linear path quick contact link */}
+                            <div className="pt-3 border-t border-slate-900/40 flex justify-end">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation(); // prevent collapsing the accordion on click
+                                  const serviceTitle = t[service.titleKey];
+                                  const serviceCode = service.code;
+                                  const promptMessage = lang === 'it' 
+                                    ? `Salve Studio Criminalistica Angelini,\n\nDesidero richiedere una consulenza preliminare e l'analisi di fattibilità per il vostro servizio:\n👉 "${serviceTitle}" (Codice: ${serviceCode}).\n\nVi prego di ricontattarmi per approfondire i dettagli operativi del mio caso.\n\nCordiali saluti.`
+                                    : `Dear Elena Angelini Criminalistics Studio,\n\nI would like to request a preliminary assessment and feasibility study for your core service segment:\n👉 "${serviceTitle}" (Code: ${serviceCode}).\n\nPlease contact me to discuss the operational details of my case.\n\nBest regards.`;
+                                  
+                                  onNavigateToContact({
+                                    subject: serviceTitle,
+                                    message: promptMessage
+                                  });
+                                }}
+                                className="w-full sm:w-auto bg-cold-500/10 hover:bg-cold-500/20 text-cold-400 border border-cold-500/30 hover:border-cold-500/60 rounded px-4 py-2.5 text-xs font-mono font-extrabold uppercase tracking-wider transition-all flex items-center justify-center space-x-2 cursor-pointer active:scale-95 shadow-md"
+                              >
+                                <Send className="w-3.5 h-3.5" />
+                                <span>{lang === 'it' ? 'Contatta lo Studio per questo Servizio' : 'Contact Studio for this Service'}</span>
+                              </button>
+                            </div>
                           </div>
                         </motion.div>
                       )}
@@ -689,6 +716,27 @@ export default function Services({ lang, onNavigateToContact }: ServicesProps) {
                                 #{tag}
                               </span>
                             ))}
+                          </div>
+
+                          {/* Linear path quick contact link for methodology */}
+                          <div className="pt-3 border-t border-slate-900/40 flex justify-end">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const promptMessage = lang === 'it'
+                                  ? `Salve Studio Criminalistica Angelini,\n\nDesidero concordare l'applicazione specifica della metodologia forense:\n👉 "${nameText}" (Protocollo: ${method.protocol}).\n\nVi prego di contattarmi per pianificare lo studio preliminare del mio caso con il vostro team di specialisti.\n\nCordiali saluti.`
+                                  : `Dear Elena Angelini Criminalistics Studio,\n\nI would like to request the specific application of your scientific forensic protocol:\n👉 "${nameText}" (Protocol: ${method.protocol}).\n\nPlease contact me to discuss integrating this methodology into my case review.\n\nBest regards.`;
+                                onNavigateToContact({
+                                  subject: nameText,
+                                  message: promptMessage
+                                });
+                              }}
+                              className="w-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:border-emerald-500/60 rounded px-3.5 py-2.5 text-xs font-mono font-extrabold uppercase tracking-wider transition-all flex items-center justify-center space-x-2 cursor-pointer active:scale-95 shadow-md"
+                            >
+                              <Send className="w-3 h-3 text-emerald-400" />
+                              <span>{lang === 'it' ? 'Richiedi questo Protocollo Scientifico' : 'Request this Scientific Protocol'}</span>
+                            </button>
                           </div>
                         </div>
                       </motion.div>
