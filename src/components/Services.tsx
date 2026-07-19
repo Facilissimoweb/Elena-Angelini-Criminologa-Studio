@@ -14,13 +14,18 @@ import {
   FileCheck2,
   BookmarkCheck,
   CheckCircle2,
-  Send
+  Send,
+  FileDown,
+  Trash2,
+  User,
+  FolderOpen
 } from 'lucide-react';
 import { Language, servicesData, translations } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import ForensicCalculator from './ForensicCalculator';
 import SectionLogo from './SectionLogo';
 import HumanBodyMap from './HumanBodyMap';
+import { jsPDF } from 'jspdf';
 
 interface ServicesProps {
   lang: Language;
@@ -203,8 +208,270 @@ export default function Services({ lang, onNavigateToContact }: ServicesProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [expandedMethodologyId, setExpandedMethodologyId] = useState<string | null>(null);
+  
+  // PDF Summary Selection States
+  const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [selectedMethodologies, setSelectedMethodologies] = useState<string[]>([]);
+  const [clientName, setClientName] = useState('');
+  const [caseId, setCaseId] = useState('');
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   const isIt = lang === 'it' || !lang;
+
+  const generatePDF = () => {
+    setIsGeneratingPDF(true);
+    try {
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      });
+
+      const sanitize = (text: string) => {
+        if (!text) return '';
+        return text
+          .replace(/à/g, "a'")
+          .replace(/á/g, "a'")
+          .replace(/è/g, "e'")
+          .replace(/é/g, "e'")
+          .replace(/ì/g, "i'")
+          .replace(/í/g, "i'")
+          .replace(/ò/g, "o'")
+          .replace(/ó/g, "o'")
+          .replace(/ù/g, "u'")
+          .replace(/ú/g, "u'")
+          .replace(/È/g, "E'")
+          .replace(/–/g, "-")
+          .replace(/—/g, "-")
+          .replace(/’/g, "'")
+          .replace(/“/g, '"')
+          .replace(/”/g, '"');
+      };
+
+      // Page dimensions
+      const margin = 15;
+      const contentWidth = 180; // 210 - 30
+      let y = 20;
+
+      const drawHeader = (isSubsequentPage = false) => {
+        // Draw top aesthetic colored bar
+        doc.setFillColor(6, 182, 212); // cyan-500
+        doc.rect(0, 0, 210, 4, 'F');
+
+        if (!isSubsequentPage) {
+          // Main brand header
+          doc.setFont('Helvetica', 'bold');
+          doc.setFontSize(16);
+          doc.setTextColor(15, 23, 42); // slate-900
+          doc.text('STUDIO CRIMINALISTICA ELENA ANGELINI', margin, 15);
+
+          doc.setFont('Helvetica', 'normal');
+          doc.setFontSize(8.5);
+          doc.setTextColor(71, 85, 105); // slate-600
+          doc.text(sanitize('Consulenze e Perizie Tecnico-Scientifiche // Criminalistica Applicata'), margin, 20);
+
+          doc.setDrawColor(226, 232, 240); // slate-200
+          doc.line(margin, 23, margin + contentWidth, 23);
+        } else {
+          doc.setFont('Helvetica', 'normal');
+          doc.setFontSize(8);
+          doc.setTextColor(148, 163, 184); // slate-400
+          doc.text(sanitize('STUDIO CRIMINALISTICA ELENA ANGELINI - Report Consulenza (Continua)'), margin, 10);
+          
+          doc.setDrawColor(226, 232, 240);
+          doc.line(margin, 12, margin + contentWidth, 12);
+        }
+      };
+
+      const checkPageBreak = (neededHeight: number) => {
+        if (y + neededHeight > 275) {
+          doc.addPage();
+          drawHeader(true);
+          y = 25;
+        }
+      };
+
+      // Draw initial page header
+      drawHeader(false);
+      y = 30;
+
+      // Title Card and Metadata Box
+      doc.setFillColor(248, 250, 252); // slate-50
+      doc.rect(margin, y, contentWidth, 32, 'F');
+      doc.setDrawColor(203, 213, 225); // slate-300
+      doc.rect(margin, y, contentWidth, 32, 'D');
+
+      doc.setFont('Helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.setTextColor(6, 182, 212); // cyan
+      doc.text(sanitize(lang === 'it' ? 'PIANIFICAZIONE PERIZIALE E TECNICO-SCIENTIFICA' : 'TECHNICAL & FORENSIC ADVISORY PLAN'), margin + 5, y + 6);
+
+      doc.setFont('Helvetica', 'normal');
+      doc.setFontSize(8.5);
+      doc.setTextColor(71, 85, 105);
+      
+      const docCode = `REF-ANGELINI-${Math.floor(100000 + Math.random() * 900000)}`;
+      doc.text(sanitize(`${lang === 'it' ? 'Codice Report' : 'Report ID'}: ${docCode}`), margin + 5, y + 13);
+      doc.text(sanitize(`${lang === 'it' ? 'Data' : 'Date'}: ${new Date().toLocaleDateString()}`), margin + 5, y + 18);
+      doc.text(sanitize(`${lang === 'it' ? 'Richiedente' : 'Applicant'}: ${clientName.trim() || (lang === 'it' ? 'Non specificato' : 'Not specified')}`), margin + 5, y + 23);
+      doc.text(sanitize(`${lang === 'it' ? 'Riferimento Caso' : 'Case Reference'}: ${caseId.trim() || 'N/A'}`), margin + 5, y + 28);
+
+      y += 38;
+
+      // Render Selected Services
+      const selectedSvcs = servicesData.filter(s => selectedServices.includes(s.id));
+      if (selectedSvcs.length > 0) {
+        checkPageBreak(12);
+        doc.setFont('Helvetica', 'bold');
+        doc.setFontSize(12);
+        doc.setTextColor(15, 23, 42);
+        doc.text(sanitize(lang === 'it' ? '1. SERVIZI DI CONSULENZA SPECIALISTICA' : '1. CORE SPECIALIZED SERVICES'), margin, y);
+        y += 6;
+
+        selectedSvcs.forEach((svc) => {
+          const title = t[svc.titleKey] || '';
+          const desc = t[svc.descKey] || '';
+          const detailsList = extraDetails[svc.id]?.[lang] || extraDetails[svc.id]?.['it'] || [];
+
+          checkPageBreak(25);
+          
+          // Draw subtle vertical line for service indicator
+          doc.setDrawColor(6, 182, 212); // cyan
+          doc.setLineWidth(0.8);
+          doc.line(margin, y, margin, y + 12);
+          doc.setLineWidth(0.2); // reset line width
+
+          doc.setFont('Helvetica', 'bold');
+          doc.setFontSize(10);
+          doc.setTextColor(15, 23, 42);
+          doc.text(sanitize(`${title} (${svc.code})`), margin + 4, y + 4);
+
+          doc.setFont('Helvetica', 'normal');
+          doc.setFontSize(8.5);
+          doc.setTextColor(71, 85, 105);
+          const descLines = doc.splitTextToSize(desc, contentWidth - 6);
+          doc.text(sanitize(descLines.join('\n')), margin + 4, y + 9);
+          y += 9 + (descLines.length * 3.5);
+
+          // Render service bullet points
+          if (detailsList.length > 0) {
+            checkPageBreak(15);
+            doc.setFont('Helvetica', 'bold');
+            doc.setFontSize(8);
+            doc.setTextColor(15, 23, 42);
+            doc.text(sanitize(lang === 'it' ? '// DETTAGLI OPERATIVI E PROTOCOLLI:' : '// OPERATIONAL DETAILS & PROTOCOLS:'), margin + 4, y);
+            y += 4;
+
+            doc.setFont('Helvetica', 'normal');
+            doc.setFontSize(8);
+            doc.setTextColor(71, 85, 105);
+
+            detailsList.forEach((point) => {
+              checkPageBreak(6);
+              const pointLines = doc.splitTextToSize(point, contentWidth - 10);
+              doc.text('-', margin + 6, y);
+              doc.text(sanitize(pointLines.join('\n')), margin + 10, y);
+              y += (pointLines.length * 3.5);
+            });
+            y += 2;
+          }
+          y += 4;
+        });
+        y += 2;
+      }
+
+      // Render Selected Methodologies
+      const selectedMets = methodologiesData.filter(m => selectedMethodologies.includes(m.id));
+      if (selectedMets.length > 0) {
+        checkPageBreak(12);
+        doc.setFont('Helvetica', 'bold');
+        doc.setFontSize(12);
+        doc.setTextColor(15, 23, 42);
+        doc.text(sanitize(lang === 'it' ? '2. PROTOCOLLI SCIENTIFICI & METODOLOGIE' : '2. SCIENTIFIC PROTOCOLS & METHODOLOGIES'), margin, y);
+        y += 6;
+
+        selectedMets.forEach((met) => {
+          const nameText = isIt ? met.name.it : met.name.en;
+          const descText = isIt ? met.desc.it : met.desc.en;
+          const catText = isIt ? met.category.it : met.category.en;
+          
+          checkPageBreak(30);
+
+          doc.setDrawColor(16, 185, 129); // emerald
+          doc.setLineWidth(0.8);
+          doc.line(margin, y, margin, y + 12);
+          doc.setLineWidth(0.2); // reset
+
+          doc.setFont('Helvetica', 'bold');
+          doc.setFontSize(10);
+          doc.setTextColor(15, 23, 42);
+          doc.text(sanitize(`${nameText} (${met.code})`), margin + 4, y + 4);
+
+          doc.setFont('Helvetica', 'normal');
+          doc.setFontSize(8);
+          doc.setTextColor(16, 185, 129); // emerald
+          doc.text(sanitize(`${lang === 'it' ? 'Categoria' : 'Category'}: ${catText} | Protocollo: ${met.protocol}`), margin + 4, y + 8);
+
+          doc.setFont('Helvetica', 'normal');
+          doc.setFontSize(8.5);
+          doc.setTextColor(71, 85, 105);
+          const descLines = doc.splitTextToSize(descText, contentWidth - 6);
+          doc.text(sanitize(descLines.join('\n')), margin + 4, y + 13);
+          y += 13 + (descLines.length * 3.5) + 3;
+        });
+      }
+
+      // Legal & Confidentiality Statement
+      checkPageBreak(40);
+      y += 4;
+      doc.setDrawColor(226, 232, 240);
+      doc.line(margin, y, margin + contentWidth, y);
+      y += 6;
+
+      doc.setFont('Helvetica', 'bold');
+      doc.setFontSize(8.5);
+      doc.setTextColor(15, 23, 42);
+      doc.text(sanitize(lang === 'it' ? 'AVVISO DI RISERVATEZZA & SEGRETO PROFESSIONALE' : 'CONFIDENTIALITY & PROFESSIONAL SECRECY NOTICE'), margin, y);
+      y += 4.5;
+
+      doc.setFont('Helvetica', 'normal');
+      doc.setFontSize(7.5);
+      doc.setTextColor(100, 116, 139); // slate-500
+      const legalText = lang === 'it'
+        ? 'Il presente riepilogo periziale e redatto ad uso esclusivo del richiedente ed e protetto dal segreto professionale ex art. 200 c.p.p. Tutte le metodologie di indagine elencate e i relativi marchi associati (es. FORA 3D, BPA, ISO 17025) sono di proprieta esclusiva dello Studio Criminalistica Elena Angelini o dei rispettivi detentori scientifici e sono protetti dalle vigenti norme sul diritto d\'autore.'
+        : 'This technical advisory report is prepared for the exclusive use of the applicant and is fully protected under professional secrecy regulations. All forensic methodologies, research data, and related trademarks (e.g., FORA 3D, BPA, ISO 17025) remain the sole scientific property of Elena Angelini Criminalistics Studio and are strictly protected under international copyright law.';
+      const legalLines = doc.splitTextToSize(legalText, contentWidth);
+      doc.text(sanitize(legalLines.join('\n')), margin, y);
+      y += (legalLines.length * 3.2) + 8;
+
+      // Signatures Area
+      checkPageBreak(25);
+      
+      const sigY = y + 10;
+      doc.setDrawColor(203, 213, 225);
+      
+      // Client line
+      doc.line(margin, sigY, margin + 70, sigY);
+      doc.setFont('Helvetica', 'normal');
+      doc.setFontSize(7.5);
+      doc.text(sanitize(lang === 'it' ? 'Firma del Richiedente' : 'Applicant Signature'), margin, sigY + 4.5);
+
+      // Studio signature line
+      doc.line(margin + 110, sigY, margin + contentWidth, sigY);
+      doc.setFont('Helvetica', 'bold');
+      doc.text(sanitize('Dr.ssa Elena Angelini'), margin + 110, sigY + 4.5);
+      doc.setFont('Helvetica', 'normal');
+      doc.text(sanitize(lang === 'it' ? 'Direttore Tecnico dello Studio' : 'Technical Director / Lead Criminologist'), margin + 110, sigY + 8);
+
+      // Save the PDF
+      const fileName = `${clientName.trim().replace(/\s+/g, '_') || 'Studio_Angelini'}_Forensic_Report.pdf`;
+      doc.save(fileName);
+    } catch (error) {
+      console.error('Failed to generate PDF:', error);
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
 
   const toggleExpand = (id: string) => {
     setExpandedId(expandedId === id ? null : id);
@@ -564,9 +831,32 @@ export default function Services({ lang, onNavigateToContact }: ServicesProps) {
 
                     {/* Card Header */}
                     <div className="flex items-center justify-between">
-                      <span className="text-cold-400 font-mono text-[10px] font-bold tracking-widest uppercase">
-                        CODE: {service.code}
-                      </span>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-cold-400 font-mono text-[10px] font-bold tracking-widest uppercase">
+                          CODE: {service.code}
+                        </span>
+                        
+                        {/* Add to Report Button */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation(); // prevent expanding the accordion
+                            setSelectedServices(prev =>
+                              prev.includes(service.id)
+                                ? prev.filter(id => id !== service.id)
+                                : [...prev, service.id]
+                            );
+                          }}
+                          className={`px-2 py-0.5 text-[9px] font-mono rounded border transition-all flex items-center space-x-1 cursor-pointer ${
+                            selectedServices.includes(service.id)
+                              ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400 font-bold'
+                              : 'bg-slate-900/80 border-slate-800 text-slate-500 hover:text-slate-300'
+                          }`}
+                        >
+                          <BookmarkCheck className={`w-3 h-3 ${selectedServices.includes(service.id) ? 'text-cyan-400 fill-cyan-400/25' : ''}`} />
+                          <span>{selectedServices.includes(service.id) ? (lang === 'it' ? 'IN RIEPILOGO' : 'IN REPORT') : (lang === 'it' ? '+ REPORT' : '+ REPORT')}</span>
+                        </button>
+                      </div>
                       <div className="w-9 h-9 rounded-lg bg-cold-500/10 border border-cold-500/20 flex items-center justify-center text-cold-400">
                         <IconComponent className="w-4.5 h-4.5" />
                       </div>
@@ -691,13 +981,36 @@ export default function Services({ lang, onNavigateToContact }: ServicesProps) {
                     <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">
                       {catText} // {method.code}
                     </span>
-                    <span className={`px-2 py-0.5 rounded text-[8px] font-mono font-bold tracking-wider uppercase border ${
-                      method.status === 'certified'
-                        ? 'bg-emerald-950/30 border-emerald-500/30 text-emerald-400'
-                        : 'bg-cyan-950/30 border-cyan-500/30 text-cyan-400'
-                    }`}>
-                      {method.status === 'certified' ? activeLabels.statusCertified : activeLabels.statusActive}
-                    </span>
+                    <div className="flex items-center space-x-1.5">
+                      {/* Selection Toggle */}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedMethodologies(prev =>
+                            prev.includes(method.id)
+                              ? prev.filter(id => id !== method.id)
+                              : [...prev, method.id]
+                          );
+                        }}
+                        className={`px-1.5 py-0.5 rounded text-[8px] font-mono font-bold tracking-wider uppercase border flex items-center space-x-0.5 cursor-pointer transition-all ${
+                          selectedMethodologies.includes(method.id)
+                            ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300'
+                            : 'bg-slate-900 border-slate-800 text-slate-500 hover:text-slate-300'
+                        }`}
+                      >
+                        <BookmarkCheck className={`w-2.5 h-2.5 ${selectedMethodologies.includes(method.id) ? 'text-emerald-400 fill-emerald-400/20' : ''}`} />
+                        <span>{selectedMethodologies.includes(method.id) ? (lang === 'it' ? 'IN REPORT' : 'IN REPORT') : (lang === 'it' ? '+ REPORT' : '+ REPORT')}</span>
+                      </button>
+
+                      <span className={`px-2 py-0.5 rounded text-[8px] font-mono font-bold tracking-wider uppercase border ${
+                        method.status === 'certified'
+                          ? 'bg-emerald-950/30 border-emerald-500/30 text-emerald-400'
+                          : 'bg-cyan-950/30 border-cyan-500/30 text-cyan-400'
+                      }`}>
+                        {method.status === 'certified' ? activeLabels.statusCertified : activeLabels.statusActive}
+                      </span>
+                    </div>
                   </div>
 
                   {/* Title of Methodology */}
@@ -800,6 +1113,174 @@ export default function Services({ lang, onNavigateToContact }: ServicesProps) {
           </p>
         </div>
       )}
+
+      {/* 3. FORENSIC REPORT GENERATOR WORKSTATION */}
+      <div className="bg-slate-950/80 border border-slate-900 rounded-xl p-5 md:p-6 space-y-6 relative shadow-xl mt-6">
+        <div className="absolute top-2.5 right-3 font-mono text-[8px] text-cyan-500/20">
+          STATION // REPORT_BUILDER_V1.1 // PDF_GENERATOR
+        </div>
+
+        {/* Section Header */}
+        <div className="text-left border-l-2 border-cyan-500 pl-3">
+          <h4 className="text-lg font-serif font-extrabold text-slate-100 uppercase tracking-wide">
+            {lang === 'it' ? 'Workstation Generazione Report Forense' : 'Forensic Report Generation Workstation'}
+          </h4>
+          <p className="text-xs text-slate-400 font-mono mt-0.5">
+            {lang === 'it' 
+              ? 'Configura e scarica un riepilogo periziale in formato PDF conforme alle linee guida dello studio' 
+              : 'Configure and download a technical forensic advisory summary in PDF format'}
+          </p>
+        </div>
+
+        {/* Selection summary display */}
+        {(selectedServices.length > 0 || selectedMethodologies.length > 0) ? (
+          <div className="space-y-4">
+            
+            {/* Selected Badges Section */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Selected Services Column */}
+              <div className="bg-slate-900/40 border border-slate-900 rounded-lg p-3.5 space-y-2 text-left">
+                <span className="text-[10px] font-mono text-cyan-400 font-bold block uppercase tracking-wider">
+                  // {lang === 'it' ? 'Servizi Selezionati' : 'Selected Services'} ({selectedServices.length}):
+                </span>
+                {selectedServices.length === 0 ? (
+                  <p className="text-[11px] font-mono text-slate-600 italic">
+                    {lang === 'it' ? 'Nessun servizio selezionato' : 'No services selected'}
+                  </p>
+                ) : (
+                  <div className="flex flex-wrap gap-1.5">
+                    {servicesData.filter(s => selectedServices.includes(s.id)).map(s => (
+                      <div 
+                        key={s.id}
+                        className="bg-cyan-950/20 border border-cyan-500/30 rounded px-2 py-1 text-[10px] font-mono text-cyan-300 flex items-center space-x-1"
+                      >
+                        <span>{s.code}</span>
+                        <button 
+                          onClick={() => setSelectedServices(prev => prev.filter(id => id !== s.id))}
+                          className="hover:text-red-400 text-slate-400 cursor-pointer pl-1 ml-1 border-l border-cyan-500/20"
+                        >
+                          &times;
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Selected Methodologies Column */}
+              <div className="bg-slate-900/40 border border-slate-900 rounded-lg p-3.5 space-y-2 text-left">
+                <span className="text-[10px] font-mono text-emerald-400 font-bold block uppercase tracking-wider">
+                  // {lang === 'it' ? 'Protocolli Selezionati' : 'Selected Protocols'} ({selectedMethodologies.length}):
+                </span>
+                {selectedMethodologies.length === 0 ? (
+                  <p className="text-[11px] font-mono text-slate-600 italic">
+                    {lang === 'it' ? 'Nessun protocollo selezionato' : 'No protocols selected'}
+                  </p>
+                ) : (
+                  <div className="flex flex-wrap gap-1.5">
+                    {methodologiesData.filter(m => selectedMethodologies.includes(m.id)).map(m => (
+                      <div 
+                        key={m.id}
+                        className="bg-emerald-950/20 border border-emerald-500/30 rounded px-2 py-1 text-[10px] font-mono text-emerald-300 flex items-center space-x-1"
+                      >
+                        <span>{m.code}</span>
+                        <button 
+                          onClick={() => setSelectedMethodologies(prev => prev.filter(id => id !== m.id))}
+                          className="hover:text-red-400 text-slate-400 cursor-pointer pl-1 ml-1 border-l border-emerald-500/20"
+                        >
+                          &times;
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Form Fields: Applicant & Case ID */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-left">
+              <div className="space-y-1">
+                <label className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block">
+                  {lang === 'it' ? 'Richiedente / Studio Legale' : 'Applicant / Law Firm'}
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                  <input
+                    type="text"
+                    value={clientName}
+                    onChange={(e) => setClientName(e.target.value)}
+                    placeholder={lang === 'it' ? 'es. Avv. Marco Rossi' : 'e.g., Atty. John Doe'}
+                    className="w-full bg-slate-900/50 border border-slate-800 rounded-lg pl-10 pr-4 py-2.5 text-slate-200 text-xs font-mono focus:outline-none focus:border-cyan-500/60 transition-all placeholder-slate-600"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block">
+                  {lang === 'it' ? 'Riferimento Caso / Procedimento' : 'Case Reference / Proceeding No.'}
+                </label>
+                <div className="relative">
+                  <FolderOpen className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                  <input
+                    type="text"
+                    value={caseId}
+                    onChange={(e) => setCaseId(e.target.value)}
+                    placeholder={lang === 'it' ? 'es. Proc. Penale N. 1024/B' : 'e.g., Proc. No. 1024/B'}
+                    className="w-full bg-slate-900/50 border border-slate-800 rounded-lg pl-10 pr-4 py-2.5 text-slate-200 text-xs font-mono focus:outline-none focus:border-cyan-500/60 transition-all placeholder-slate-600"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="pt-3 border-t border-slate-900/60 flex flex-col sm:flex-row gap-3 justify-end items-stretch sm:items-center">
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedServices([]);
+                  setSelectedMethodologies([]);
+                  setClientName('');
+                  setCaseId('');
+                }}
+                className="px-4 py-2.5 bg-slate-900 hover:bg-red-950/20 border border-slate-800 hover:border-red-900/50 text-slate-400 hover:text-red-400 font-mono text-xs rounded transition-all cursor-pointer flex items-center justify-center space-x-2"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>{lang === 'it' ? 'Svuota Selezione' : 'Clear Selection'}</span>
+              </button>
+
+              <button
+                type="button"
+                disabled={isGeneratingPDF}
+                onClick={generatePDF}
+                className="px-6 py-2.5 bg-cyan-500 hover:bg-cyan-600 disabled:bg-cyan-900 text-white font-mono font-bold text-xs rounded transition-all cursor-pointer flex items-center justify-center space-x-2 shadow-md hover:shadow-cyan-500/15"
+              >
+                <FileDown className="w-4 h-4" />
+                <span>
+                  {isGeneratingPDF 
+                    ? (lang === 'it' ? 'Generazione...' : 'Generating...') 
+                    : (lang === 'it' ? 'Scarica Riepilogo PDF' : 'Download PDF Summary')}
+                </span>
+              </button>
+            </div>
+            
+            <p className="text-[10px] font-mono text-slate-500 text-left pt-1">
+              {lang === 'it'
+                ? '* Il report compilato include protocolli di catena di custodia, specifiche di indagine ed e pronto per l\'archiviazione documentale.'
+                : '* The generated PDF contains chain-of-custody protocols, specific investigation plans, and is ready for legal filing.'}
+            </p>
+
+          </div>
+        ) : (
+          <div className="bg-slate-900/20 border border-dashed border-slate-800 rounded-xl p-6 text-center space-y-3.5">
+            <FileCheck2 className="w-8 h-8 text-cyan-500/50 mx-auto animate-pulse" />
+            <p className="text-slate-400 font-mono text-xs max-w-lg mx-auto leading-relaxed text-center">
+              {lang === 'it'
+                ? 'Nessun servizio o protocollo scientifico selezionato. Scorri le schede sopra e premi "+ REPORT" per aggiungere elementi al tuo riepilogo in PDF.'
+                : 'No services or scientific protocols selected. Scroll through the cards above and click "+ REPORT" to build your custom PDF advisory report.'}
+            </p>
+          </div>
+        )}
+      </div>
 
       {/* FORENSIC CALCULATOR ESTIMATOR */}
       <div className="pt-6">
