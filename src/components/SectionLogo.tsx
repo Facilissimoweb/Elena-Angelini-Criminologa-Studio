@@ -11,10 +11,10 @@ export default function SectionLogo({ lang, className = '', align = 'left' }: Se
   const isRight = align === 'right';
 
   return (
-    <div className={`flex items-center space-x-2.5 pb-3 opacity-75 hover:opacity-100 transition-opacity duration-300 ${isCenter ? 'justify-center text-center' : isRight ? 'justify-end text-right' : 'justify-start text-left'} ${className}`}>
+    <div className={`flex items-center space-x-3 pb-4 opacity-80 hover:opacity-100 transition-opacity duration-300 ${isCenter ? 'justify-center text-center' : isRight ? 'justify-end text-right' : 'justify-start text-left'} ${className}`}>
       <div className="relative flex-shrink-0 select-none">
         <svg
-          className="w-5.5 h-5.5 text-cold-400"
+          className="w-7.5 h-7.5 text-cold-400"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -27,11 +27,11 @@ export default function SectionLogo({ lang, className = '', align = 'left' }: Se
           <line x1="0" y1="12" x2="24" y2="12" className="stroke-cyan-500/20"></line>
         </svg>
       </div>
-      <div className="flex flex-col leading-none">
-        <span className="text-[10px] font-bold tracking-widest uppercase font-serif text-slate-100">
+      <div className="flex flex-col leading-tight">
+        <span className="text-[12px] md:text-[13.5px] font-bold tracking-[0.18em] uppercase font-serif text-slate-100">
           Elena Angelini
         </span>
-        <span className="text-[7.5px] font-mono text-cold-400 tracking-wider uppercase">
+        <span className="text-[8.5px] md:text-[9.5px] font-mono text-cold-400 tracking-wider uppercase">
           {lang === 'it' ? 'Studio Criminalistica' : 'Forensic Studio'}
         </span>
       </div>
