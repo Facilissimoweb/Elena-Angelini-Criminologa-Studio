@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Globe, Check, ChevronDown } from "lucide-react";
+import { Globe, Check, ChevronDown, X } from "lucide-react";
 
 // 1. Configurazione delle Lingue supportate (Bandiera, Nome, Codice ISO)
 const GOOGLE_LANGUAGES = [
@@ -31,7 +31,7 @@ export default function LanguageSwitcher({ onLanguageChangeExternal }: LanguageS
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Chiude il menu a discesa se si clicca fuori
+  // Chiude il menu se si clicca fuori (utile se l'utente clicca fuori, anche se ora è a pieno schermo)
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -43,6 +43,18 @@ export default function LanguageSwitcher({ onLanguageChangeExternal }: LanguageS
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  // Blocca lo scroll del body quando il widget a pagina intera è aperto
+  useEffect(() => {
+    if (dropdownOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [dropdownOpen]);
 
   // 2. Inizializzazione dinamica di Google Translate
   useEffect(() => {
@@ -141,47 +153,71 @@ export default function LanguageSwitcher({ onLanguageChangeExternal }: LanguageS
   const currentLang = GOOGLE_LANGUAGES.find(l => l.code === selectedGoogleLang) || GOOGLE_LANGUAGES[0];
 
   return (
-    <div className="relative inline-block text-left" ref={dropdownRef}>
+    <div className="inline-block text-left" ref={dropdownRef}>
       {/* Bottone principale del Selettore */}
       <button
         onClick={() => setDropdownOpen(!dropdownOpen)}
         className="flex items-center space-x-2 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 rounded-xl px-3 py-2 text-xs font-semibold cursor-pointer transition-all hover:border-cyan-500/30 shadow-md focus:outline-none"
       >
-        <Globe className="h-4 w-4 text-cyan-400 shrink-0" />
+        <Globe className="h-4 w-4 text-cyan-400 shrink-0 animate-pulse" />
         <span className="text-slate-300">
           {currentLang.flag} {currentLang.name}
         </span>
-        <ChevronDown className={`h-3 w-3 text-slate-500 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className="h-3 w-3 text-slate-500" />
       </button>
 
       {/* Elemento contenitore di Google Translate Nascosto (OBBLIGATORIO) */}
       <div id="google_translate_element" className="absolute opacity-0 pointer-events-none h-0 w-0 overflow-hidden" />
 
-      {/* Menu a discesa personalizzato delle Lingue */}
+      {/* WIDGET DI TRADUZIONI A PAGINA INTERA (FULL-PAGE TRANSLATION MODAL) */}
       {dropdownOpen && (
-        <div className="absolute right-0 mt-2 w-56 max-h-72 overflow-y-auto bg-slate-950/95 backdrop-blur-md border border-slate-800 rounded-2xl shadow-2xl z-50 py-1.5 custom-scrollbar">
-          <div className="px-3 py-1.5 border-b border-slate-900 mb-1 text-[9px] uppercase font-bold text-slate-500 font-mono tracking-widest">
-            Select Language
+        <div className="fixed inset-0 bg-slate-950/98 backdrop-blur-2xl z-[99999] flex flex-col items-center justify-center p-6 md:p-12 overflow-y-auto">
+          {/* Pulsante di chiusura in alto a destra */}
+          <button
+            onClick={() => setDropdownOpen(false)}
+            className="absolute top-6 right-6 text-slate-400 hover:text-white bg-slate-900/60 hover:bg-slate-800/80 p-3 rounded-full border border-slate-800 transition-all hover:border-slate-700 hover:scale-105 cursor-pointer flex items-center justify-center"
+            title="Chiudi / Close"
+          >
+            <X className="h-6 w-6 text-slate-300" />
+          </button>
+
+          {/* Intestazione del selettore */}
+          <div className="text-center mb-8 max-w-xl">
+            <Globe className="h-14 w-14 text-cyan-400 mx-auto mb-4 animate-spin-slow" />
+            <h2 className="text-2xl md:text-3xl font-bold font-serif text-slate-100 uppercase tracking-wide">
+              {selectedGoogleLang === 'it' ? 'Seleziona Lingua' : 'Select Language'}
+            </h2>
+            <p className="text-slate-400 text-xs md:text-sm mt-2 font-sans">
+              {selectedGoogleLang === 'it' 
+                ? 'Scegli la lingua per tradurre automaticamente l\'intero portale.' 
+                : 'Choose your language to automatically translate the entire portal.'}
+            </p>
           </div>
-          {GOOGLE_LANGUAGES.map(lang => (
-            <button
-              key={lang.code}
-              onClick={() => handleLanguageChange(lang.code)}
-              className={`w-full text-left px-4 py-2 text-xs flex items-center justify-between transition-colors cursor-pointer ${
-                selectedGoogleLang === lang.code
-                  ? 'bg-cyan-500/10 text-cyan-400 font-bold'
-                  : 'text-slate-400 hover:bg-slate-900 hover:text-white'
-              }`}
-            >
-              <span className="flex items-center space-x-2.5">
-                <span className="text-sm shrink-0">{lang.flag}</span>
-                <span>{lang.name}</span>
-              </span>
-              {selectedGoogleLang === lang.code && (
-                <Check className="h-3.5 w-3.5 text-cyan-400 shrink-0" />
-              )}
-            </button>
-          ))}
+
+          {/* Griglia delle lingue a pagina intera */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 w-full max-w-4xl max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+            {GOOGLE_LANGUAGES.map(lang => (
+              <button
+                key={lang.code}
+                onClick={() => handleLanguageChange(lang.code)}
+                className={`flex items-center space-x-3.5 p-4 rounded-2xl text-left border transition-all cursor-pointer ${
+                  selectedGoogleLang === lang.code
+                    ? 'bg-cyan-500/10 border-cyan-500 text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.15)] font-bold'
+                    : 'bg-slate-900/30 border-slate-850 text-slate-400 hover:bg-slate-900/80 hover:border-slate-750 hover:text-white'
+                }`}
+              >
+                <span className="text-2xl shrink-0 select-none">{lang.flag}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs md:text-sm font-semibold truncate tracking-wide font-sans">
+                    {lang.name}
+                  </p>
+                </div>
+                {selectedGoogleLang === lang.code && (
+                  <Check className="h-4 w-4 text-cyan-400 shrink-0" />
+                )}
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>
