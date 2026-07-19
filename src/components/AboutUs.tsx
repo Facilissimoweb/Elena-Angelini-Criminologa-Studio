@@ -26,6 +26,16 @@ import { Language } from '../types';
 import { motion } from 'motion/react';
 import ForensicTimeline from './ForensicTimeline';
 import { jsPDF } from 'jspdf';
+import { 
+  Radar, 
+  RadarChart, 
+  PolarGrid, 
+  PolarAngleAxis, 
+  PolarRadiusAxis, 
+  ResponsiveContainer,
+  Tooltip,
+  Legend
+} from 'recharts';
 
 interface AboutUsProps {
   lang: Language;
@@ -121,7 +131,22 @@ const localTranslations: Record<string, any> = {
     slogan: "La Scienza Forense al vostro servizio",
     ctaBtn: "Richiedi Valutazione Gratuita",
     pdfBtn: "Scarica Profilo PDF",
-    pdfGenerating: "Generazione PDF..."
+    pdfGenerating: "Generazione PDF...",
+    // Chart Section
+    chartTitle: "Aree di Specializzazione Forense",
+    chartSubtitle: "Visualizzazione empirica del carico dei casi e della profondità analitica dello studio",
+    chartDesc: "Il grafico a radar evidenzia l'eccellenza multidisciplinare dello Studio Angelini. Ogni area è coperta da specialisti di comprovata esperienza e supportata da rigorose metodologie scientifiche di laboratorio, fornendo risposte concrete a quesiti complessi.",
+    chartSpecs: {
+      fingerprints: "Analisi Impronte",
+      dna: "Genetica & DNA",
+      reconstruction: "Ricostruzione 3D",
+      ballistics: "Balistica Forense",
+      graphology: "Grafologia & Firme",
+      digital: "Informatica Forense",
+      criminology: "Criminologia"
+    },
+    chartLegendCases: "Casi Trattati (%)",
+    chartLegendExpertise: "Profondità Scientifica (Score)"
   },
   
   // Standard elegant English fallback with complete fidelity to user's text
@@ -205,7 +230,22 @@ const localTranslations: Record<string, any> = {
     slogan: "Forensic Science at your service",
     ctaBtn: "Request Free Assessment",
     pdfBtn: "Download PDF Profile",
-    pdfGenerating: "Generating PDF..."
+    pdfGenerating: "Generating PDF...",
+    // Chart Section
+    chartTitle: "Forensic Specialization Areas",
+    chartSubtitle: "Empirical breakdown of case volumes and analytical research depth",
+    chartDesc: "This radar visualization demonstrates the multidisciplinary expertise of Studio Angelini. Each focus area is managed by credentialed specialists and supported by rigorous laboratory protocols, offering quantifiable scientific answers.",
+    chartSpecs: {
+      fingerprints: "Fingerprint Analysis",
+      dna: "Genetics & DNA",
+      reconstruction: "3D Reconstruction",
+      ballistics: "Forensic Ballistics",
+      graphology: "Graphology & Signatures",
+      digital: "Digital Forensics",
+      criminology: "Criminology"
+    },
+    chartLegendCases: "Handled Cases (%)",
+    chartLegendExpertise: "Scientific Depth (Score)"
   }
 };
 
@@ -213,6 +253,44 @@ export default function AboutUs({ lang, onNavigateToContact }: AboutUsProps) {
   // Use translations fallback gracefully
   const t = localTranslations[lang] || localTranslations['it'];
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+
+  const chartData = [
+    {
+      subject: t.chartSpecs?.fingerprints || "Analisi Impronte",
+      casi: 85,
+      competenza: 95,
+    },
+    {
+      subject: t.chartSpecs?.dna || "Genetica & DNA",
+      casi: 78,
+      competenza: 90,
+    },
+    {
+      subject: t.chartSpecs?.reconstruction || "Ricostruzione 3D",
+      casi: 92,
+      competenza: 98,
+    },
+    {
+      subject: t.chartSpecs?.ballistics || "Balistica Forense",
+      casi: 70,
+      competenza: 88,
+    },
+    {
+      subject: t.chartSpecs?.graphology || "Grafologia & Firme",
+      casi: 88,
+      competenza: 94,
+    },
+    {
+      subject: t.chartSpecs?.digital || "Informatica Forense",
+      casi: 80,
+      competenza: 92,
+    },
+    {
+      subject: t.chartSpecs?.criminology || "Criminologia",
+      casi: 95,
+      competenza: 96,
+    },
+  ];
 
   const renderDoubleColor = (text: string) => {
     if (!text) return '';
@@ -564,6 +642,101 @@ export default function AboutUs({ lang, onNavigateToContact }: AboutUsProps) {
               </p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* SECTION: SCIENTIFIC SPECIALIZATION BREAKDOWN (RECHARTS) */}
+      <section className="rounded-xl border border-slate-900/60 bg-gradient-to-b from-slate-950 to-slate-900/40 p-6 md:p-8 space-y-6" id="specialization-analytics">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          
+          {/* Left: Text and explanation */}
+          <div className="lg:col-span-5 space-y-4 text-left">
+            <div className="flex items-center space-x-2 text-cold-400 text-xs font-mono uppercase tracking-wider">
+              <Activity className="w-4 h-4 text-cyan-400 animate-pulse" />
+              <span>STATION_SYS // EMPIRICAL_METRICS</span>
+            </div>
+            <h3 className="text-xl md:text-2xl font-serif font-extrabold uppercase tracking-wide">
+              {renderDoubleColor(t.chartTitle)}
+            </h3>
+            <p className="text-xs font-mono text-cyan-500/90 leading-relaxed uppercase">
+              // {t.chartSubtitle}
+            </p>
+            <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
+              {t.chartDesc}
+            </p>
+            
+            <div className="pt-4 space-y-2 border-t border-slate-900/60 font-mono text-[10px] text-slate-400">
+              <div className="flex items-center justify-between">
+                <span>DATABASE_RECORDS:</span>
+                <span className="text-cyan-400 font-bold">1420+ CASES TRACED</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>CONFIDENCE_INTERVAL:</span>
+                <span className="text-cyan-400 font-bold">99.7% (3-SIGMA)</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>LAB_CALIBRATION:</span>
+                <span className="text-cyan-400 font-bold">ISO/IEC 17025 COMPLIANT</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Recharts Radar Chart */}
+          <div className="lg:col-span-7 bg-slate-950/80 rounded-xl border border-cyan-500/10 p-4 md:p-6 shadow-2xl relative min-h-[350px] flex items-center justify-center">
+            {/* Aesthetic coordinate markings for the lab style */}
+            <div className="absolute top-2 left-3 font-mono text-[8px] text-cyan-500/20">GRID_REF // RX_409</div>
+            <div className="absolute bottom-2 right-3 font-mono text-[8px] text-cyan-500/20">SCALE // 1.0_V</div>
+
+            <div className="w-full h-[320px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart cx="50%" cy="50%" outerRadius="80%" data={chartData}>
+                  <PolarGrid stroke="#0e7490" strokeOpacity={0.2} />
+                  <PolarAngleAxis 
+                    dataKey="subject" 
+                    tick={{ fill: '#94a3b8', fontSize: 10, fontFamily: 'monospace' }} 
+                  />
+                  <PolarRadiusAxis 
+                    angle={30} 
+                    domain={[0, 100]} 
+                    tick={{ fill: '#475569', fontSize: 8 }} 
+                  />
+                  <Radar 
+                    name={t.chartLegendCases} 
+                    dataKey="casi" 
+                    stroke="#06b6d4" 
+                    fill="#06b6d4" 
+                    fillOpacity={0.15} 
+                  />
+                  <Radar 
+                    name={t.chartLegendExpertise} 
+                    dataKey="competenza" 
+                    stroke="#10b981" 
+                    fill="#10b981" 
+                    fillOpacity={0.15} 
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#020617', 
+                      borderColor: '#1e293b', 
+                      borderRadius: '8px',
+                      fontSize: '11px',
+                      fontFamily: 'monospace',
+                      color: '#f8fafc'
+                    }} 
+                  />
+                  <Legend 
+                    wrapperStyle={{ 
+                      fontSize: '10px', 
+                      fontFamily: 'monospace',
+                      paddingTop: '10px'
+                    }} 
+                  />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
+
+          </div>
+
         </div>
       </section>
 

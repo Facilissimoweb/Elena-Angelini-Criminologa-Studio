@@ -7,6 +7,10 @@ const authorAvatars: Record<string, string> = {
   t2: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&q=80&w=150', // specialized technician
   t3: 'https://images.unsplash.com/photo-1472417583565-62e7bdeda490?auto=format&fit=crop&q=80&w=150', // pensioner
   t4: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=150', // teacher/student educator
+  t5: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=150', // heir / professional woman
+  t6: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=150', // brother / man in his 30s
+  t7: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&q=80&w=150', // defense attorney
+  t8: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150', // freelance professional
 };
 
 interface TestimonialsProps {

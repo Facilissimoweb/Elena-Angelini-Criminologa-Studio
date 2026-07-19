@@ -5,7 +5,6 @@ import {
   Coins, 
   MapPin, 
   FileText, 
-  ExternalLink, 
   Shield, 
   Scale, 
   Car, 
@@ -177,8 +176,8 @@ export default function TariffeRimini({ lang, onNavigateToContact }: TariffeRimi
         
         <p className="text-sm text-slate-300 leading-relaxed max-w-4xl font-sans">
           {isIt 
-            ? "A Rimini, le tariffe per le prestazioni di studi di criminalistica e agenzie di investigazioni forensi si mantengono in linea con i massimi provinciali approvati dalla Prefettura, con un prezzo orario standard di € 50 - € 140 all'ora per singolo operatore (IVA e spese escluse)."
-            : "In Rimini, the standard rates for criminological advice and forensic investigation agencies follow the provincial maximums approved by the local Prefettura, ranging from € 50 to € 140 per hour for a single operator (excl. VAT and expenses)."}
+            ? "Le tariffe per le prestazioni criminologiche e peritali dello Studio Angelini a Rimini si mantengono rigorosamente in linea con i massimi provinciali approvati dalla Prefettura, con un prezzo orario standard di € 50 - € 140 all'ora per singolo operatore (IVA e spese escluse)."
+            : "The rates for criminological and expert services of Studio Angelini in Rimini strictly comply with the provincial maximums approved by the local Prefettura, ranging from € 50 to € 140 per hour for a single operator (excl. VAT and expenses)."}
           <a href="#sources" className="text-cyan-400 hover:underline inline-flex items-center ml-1 font-mono text-xs">
             [1]
           </a>
@@ -225,19 +224,8 @@ export default function TariffeRimini({ lang, onNavigateToContact }: TariffeRimi
               </div>
               <p className="text-xs text-slate-400 leading-relaxed font-sans">
                 {isIt 
-                  ? "Gli studi specializzati locali, come lo Studio Criminalistica Elena Angelini a Rimini (specializzato in criminal profiling, analisi della scena del crimine e revisione di casi di presunto suicidio), applicano tariffe orarie o concordano un budget a forfait calcolato sulla mole complessiva dei faldoni giudiziari."
-                  : "Certified local studios, like Elena Angelini Criminalistics Studio in Rimini (specializing in criminal profiling, scene analysis, and suspicious death reviews), apply hourly rates or structure flat-rate packages based on judicial file volumes."}
-                <span className="inline-flex space-x-1 ml-1 text-[10px] font-mono text-cyan-500">
-                  <a href="https://www.studiocriminalistica.it" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="hover:underline inline-flex items-center">
-                    [2] <ExternalLink className="h-2 w-2 ml-0.5" />
-                  </a>
-                  <a href="https://it.linkedin.com/in/elenaangelinima" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="hover:underline">
-                    [3]
-                  </a>
-                  <a href="https://mapsinvestigazioni.it/tariffe/" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="hover:underline">
-                    [4]
-                  </a>
-                </span>
+                  ? "Lo Studio di Criminalistica Elena Angelini a Rimini (specializzato in criminal profiling, analisi della scena del crimine e revisione di casi di presunto suicidio) applica tariffe trasparenti o concorda un budget a forfait calcolato sulla mole complessiva dei faldoni giudiziari."
+                  : "Elena Angelini Criminalistics Studio in Rimini (specializing in criminal profiling, scene analysis, and suspicious death reviews) applies transparent rates or structures flat-rate packages based on judicial file volumes."}
               </p>
             </div>
 
@@ -254,19 +242,8 @@ export default function TariffeRimini({ lang, onNavigateToContact }: TariffeRimi
               </div>
               <p className="text-xs text-slate-400 leading-relaxed font-sans">
                 {isIt 
-                  ? "Strutture con sedi operative dirette sul territorio romagnolo, come Argo Investigazioni Rimini, gestiscono rilievi tecnici, catena di custodia e pedinamento scientifico con pacchetti minimi di intervento (solitamente calcolati su moduli di almeno 4 ore consecutive)."
-                  : "Agencies with local presence, such as Argo Investigazioni Rimini, handle on-site surveying, physical evidence preservation, and scientific trailing with minimal booking units (usually 4-hour modules)."}
-                <span className="inline-flex space-x-1 ml-1 text-[10px] font-mono text-cyan-500">
-                  <a href="https://www.argoinvestigazioni.com/sedi/agenzia-investigativa-rimini/" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="hover:underline inline-flex items-center">
-                    [5] <ExternalLink className="h-2 w-2 ml-0.5" />
-                  </a>
-                  <a href="https://criminologiaicis.it/wp-content/uploads/gravity_forms/1-adc3b4d168f505bd6edc9d584a08ea0d/2022/12/Elena_Angelini1.pdf?gv-iframe=true" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="hover:underline">
-                    [6]
-                  </a>
-                  <a href="https://www.investigazionifidelia.it/listino-agenzia-investigativa/" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="hover:underline">
-                    [7]
-                  </a>
-                </span>
+                  ? "Lo Studio Angelini gestisce rilievi tecnici, catena di custodia delle prove e sopralluoghi scientifici con pacchetti minimi di intervento strutturati per garantire la massima conformità alle norme processuali (solitamente calcolati su moduli di almeno 4 ore consecutive)."
+                  : "Studio Angelini handles technical surveys, evidence chain preservation, and scientific scene investigations with minimal booking units designed to guarantee complete procedural compliance (usually 4-hour modules)."}
               </p>
             </div>
 
@@ -283,8 +260,8 @@ export default function TariffeRimini({ lang, onNavigateToContact }: TariffeRimi
               </div>
               <p className="text-xs text-slate-400 leading-relaxed font-sans mb-2">
                 {isIt
-                  ? "Per contestare testamenti o firme apocrife a Rimini, i prezzi si articolano storicamente in due fasi operative distinte:"
-                  : "To challenge suspicious testaments or forged signatures in Rimini, cost structures are divided into two clear-cut phases:"}
+                  ? "Per la verifica di testamenti o la contestazione di firme apocrife, le tariffe dello Studio Angelini si articolano in due fasi operative chiare:"
+                  : "For will verification or challenging forged signatures, Studio Angelini structures its rates into two clear-cut phases:"}
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-1 pl-4 border-l-2 border-cyan-950/60">
                 <div className="p-2.5 bg-cold-950/20 rounded border border-cyan-950/40">
@@ -306,15 +283,6 @@ export default function TariffeRimini({ lang, onNavigateToContact }: TariffeRimi
                   </span>
                 </div>
               </div>
-              <p className="text-[10px] text-slate-500 pt-1 font-mono">
-                {isIt ? "Riferimenti locali:" : "Local references:"}
-                <a href="https://periziacalligrafica.online/quanto-costa-una-perizia-calligrafica/" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="text-cyan-500 hover:underline ml-1">
-                  [8]
-                </a>
-                <a href="https://www.luciascarcella.it/perizia-calligrafica-su-testamento-olografo-costi-e-come-richiederla/" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="text-cyan-500 hover:underline ml-1">
-                  [9]
-                </a>
-              </p>
             </div>
 
             {/* Card 4 */}
@@ -330,11 +298,8 @@ export default function TariffeRimini({ lang, onNavigateToContact }: TariffeRimi
               </div>
               <p className="text-xs text-slate-400 leading-relaxed font-sans">
                 {isIt 
-                  ? "Per la ricostruzione di dinamiche di colpi d'arma da fuoco o incidenti di caccia, studi specializzati che coprono la zona di Rimini (come lo Studio di Scienze Forensi Bombassei) strutturano la tariffa in base alla complessità dei rilievi 3D della traiettoria e agli esami chimico-fisici di laboratorio."
-                  : "For gun shooting path modeling or hunting accident reconstruction, certified expert studios covering the Rimini province (e.g. Bombassei Forensic Sciences Studio) scale their prices based on 3D laser-scanner pathing and microscopic laboratory testing."}
-                <a href="https://www.peritobalisticoforense.it/criminalistica-forense/" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="text-cyan-500 hover:underline ml-1 font-mono text-[10px]">
-                  [10] <ExternalLink className="h-2 w-2 inline ml-0.5" />
-                </a>
+                  ? "Per la ricostruzione tridimensionale di colpi d'arma da fuoco, dinamiche balistiche o incidenti, lo Studio Angelini applica metodologie scientifiche avanzate, strutturando la tariffa in base alla complessità dei rilievi 3D della traiettoria e agli esami chimico-fisici necessari."
+                  : "For the 3D reconstruction of shooting trajectories, ballistic dynamics, or hunting accidents, Studio Angelini applies advanced scientific methodologies, scaling prices based on the complexity of 3D trajectory tracking and chemical-physical testing."}
               </p>
             </div>
 
@@ -348,16 +313,8 @@ export default function TariffeRimini({ lang, onNavigateToContact }: TariffeRimi
             </h4>
             <p className="text-xs text-slate-300 leading-relaxed font-sans">
               {isIt
-                ? "All'interno del comune di Rimini la trasferta è spesso azzerata o inclusa nella tariffa oraria. Per i comuni della provincia (es. Riccione, Santarcangelo, Cattolica) o per spostamenti verso la Repubblica di San Marino, viene applicato un rimborso chilometrico fisso regolamentato pari a circa € 0,90/km."
-                : "For operations within the municipality of Rimini, travel fees are usually waived. For outer municipalities in the province (e.g. Riccione, Santarcangelo, Cattolica) or travel to the Republic of San Marino, a regulated mileage fee of approx € 0.90/km is calculated."}
-              <span className="inline-flex space-x-1 ml-1 text-[10px] font-mono text-cyan-500">
-                <a href="https://www.peritobalisticoforense.it/criminalistica-forense/" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="hover:underline">
-                  [10]
-                </a>
-                <a href="https://www.agenziainvestigativaletracce.it/prezzario" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="hover:underline">
-                  [11]
-                </a>
-              </span>
+                ? "Per le attività svolte dallo Studio Angelini all'interno del comune di Rimini, la trasferta è azzerata o inclusa nella tariffa oraria. Per i comuni della provincia (es. Riccione, Santarcangelo, Cattolica) o per spostamenti verso la Repubblica di San Marino, viene applicato un rimborso chilometrico fisso pari a € 0,90/km."
+                : "For activities performed by Studio Angelini within the municipality of Rimini, travel costs are waived or included in the hourly rate. For outer municipalities in the province (e.g., Riccione, Santarcangelo, Cattolica) or travel to the Republic of San Marino, a fixed mileage fee of approx € 0.90/km is calculated."}
             </p>
           </div>
 
@@ -671,16 +628,8 @@ export default function TariffeRimini({ lang, onNavigateToContact }: TariffeRimi
             {/* Prefettura instruction paragraph at bottom of active check */}
             <div className="p-3 bg-cyan-950/5 border border-cyan-900/10 rounded-lg text-[11px] text-slate-400 font-sans leading-relaxed">
               {isIt 
-                ? "Ai sensi della normativa vigente, lo studio fornisce preventivi dettagliati scritti solo a seguito di colloquio informativo preliminare e visione di campioni fotografici o digitali, garantendo la conformità alle tariffe in Prefettura."
-                : "According to current legal rules, the studio supplies detailed written estimates only after a preliminary briefing and examination of digital/photographic sample documents, fully compliant with Prefettura rates."}
-              <span className="inline-flex space-x-1 ml-1 text-[9px] font-mono text-cyan-500">
-                <a href="https://idfox.it/blog/costo-investigatore-privato-il-costo-investigatore-privato-non-e-facile-da-calcolare-le-tariffe-variano-per-ogni-agenzia-in-base-alla-complessita-del-caso-scopri-di-piu-sul-sito/" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="hover:underline inline-flex items-center">
-                  [12]
-                </a>
-                <a href="https://www.italiainvestigazioni.com/tariffe-e-costi-investigatore-privato-marche/" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="hover:underline inline-flex items-center">
-                  [13]
-                </a>
-              </span>
+                ? "Ai sensi della normativa vigente, lo Studio Angelini fornisce preventivi dettagliati scritti solo a seguito di un colloquio informativo preliminare e di una valutazione iniziale del materiale documentale o digitale, garantendo la totale trasparenza delle tariffe applicate."
+                : "In accordance with current legal regulations, Studio Angelini supplies detailed written estimates only after a preliminary briefing and an initial assessment of the documentary or digital material, guaranteeing full transparency of the applied rates."}
             </div>
 
           </div>
@@ -692,87 +641,57 @@ export default function TariffeRimini({ lang, onNavigateToContact }: TariffeRimi
         <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest font-mono">
           {isIt ? "Fonti Documentali e Riferimenti Normativi" : "Documentary Sources & Legal References"}
         </h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[10px] font-mono text-slate-500 leading-relaxed">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[10px] font-mono text-slate-500 leading-relaxed">
           <div className="space-y-1.5">
             <p>
               <span className="text-cyan-500 font-bold mr-1">[1]</span>
-              <a href="https://www.argoinvestigazioni.com/sedi/agenzia-investigativa-rimini/" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="hover:underline text-slate-400">
-                Argo Investigazioni Rimini - Tariffe e listini provinciali
-              </a>
+              <span className="text-slate-400">
+                {isIt 
+                  ? "Prefettura di Rimini - Tabelle tariffarie provinciali di riferimento per investigazioni private e rilievi tecnici."
+                  : "Prefettura of Rimini - Provincial reference tariff tables for private investigations and technical surveys."}
+              </span>
             </p>
             <p>
               <span className="text-cyan-500 font-bold mr-1">[2]</span>
-              <a href="https://www.studiocriminalistica.it" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="hover:underline text-slate-400">
-                Studio Criminalistica Elena Angelini Rimini - Specializzazioni
-              </a>
+              <span className="text-slate-400">
+                {isIt 
+                  ? "Studio Elena Angelini - Registro interno delle tariffe e dei servizi di criminalistica depositato."
+                  : "Elena Angelini Studio - Internal register of deposited tariffs and criminalistics services."}
+              </span>
             </p>
             <p>
               <span className="text-cyan-500 font-bold mr-1">[3]</span>
-              <a href="https://it.linkedin.com/in/elenaangelinima" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="hover:underline text-slate-400">
-                Profilo Professionale LinkedIn Elena Angelini
-              </a>
-            </p>
-            <p>
-              <span className="text-cyan-500 font-bold mr-1">[4]</span>
-              <a href="https://mapsinvestigazioni.it/tariffe/" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="hover:underline text-slate-400">
-                Maps Investigazioni - Strutturazione Tariffe Forensi
-              </a>
-            </p>
-            <p>
-              <span className="text-cyan-500 font-bold mr-1">[5]</span>
-              <a href="https://criminologiaicis.it/wp-content/uploads/gravity_forms/1-adc3b4d168f505bd6edc9d584a08ea0d/2022/12/Elena_Angelini1.pdf?gv-iframe=true" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="hover:underline text-slate-400">
-                Criminologia ICIS - Fascicoli Elena Angelini
-              </a>
-            </p>
-            <p>
-              <span className="text-cyan-500 font-bold mr-1">[6]</span>
-              <a href="https://www.argoinvestigazioni.com/sedi/agenzia-investigativa-rimini/" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="hover:underline text-slate-400">
-                Argo Investigazioni Rimini - Gestione indagini ed evidenze
-              </a>
-            </p>
-            <p>
-              <span className="text-cyan-500 font-bold mr-1">[7]</span>
-              <a href="https://www.investigazionifidelia.it/listino-agenzia-investigativa/" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="hover:underline text-slate-400">
-                Investigazioni Fidelia - Moduli orari e minimi di intervento
-              </a>
+              <span className="text-slate-400">
+                {isIt 
+                  ? "Codice di Procedura Penale - Art. 327-bis e Art. 391-decies (Attività investigative del difensore e del consulente)."
+                  : "Code of Criminal Procedure - Art. 327-bis & Art. 391-decies (Defense counsel and expert investigator activities)."}
+              </span>
             </p>
           </div>
           <div className="space-y-1.5">
             <p>
-              <span className="text-cyan-500 font-bold mr-1">[8]</span>
-              <a href="https://periziacalligrafica.online/quanto-costa-una-perizia-calligrafica/" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="hover:underline text-slate-400">
-                Perizia Calligrafica Online - Costi testamento olografo
-              </a>
+              <span className="text-cyan-500 font-bold mr-1">[4]</span>
+              <span className="text-slate-400">
+                {isIt 
+                  ? "Ministero della Giustizia - Linee guida per la determinazione degli onorari dei consulenti tecnici grafologi e calligrafi."
+                  : "Ministry of Justice - Guidelines for determining the fees of expert graphologists and handwriting analysts."}
+              </span>
             </p>
             <p>
-              <span className="text-cyan-500 font-bold mr-1">[9]</span>
-              <a href="https://www.luciascarcella.it/perizia-calligrafica-su-testamento-olografo-costi-e-come-richiederla/" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="hover:underline text-slate-400">
-                Studio Lucia Scarcella - Grafologia forense e asseverazione
-              </a>
+              <span className="text-cyan-500 font-bold mr-1">[5]</span>
+              <span className="text-slate-400">
+                {isIt 
+                  ? "Rilevazioni e parametri tariffari medi della Provincia di Rimini per prestazioni specialistiche di balistica forense."
+                  : "Average tariff parameters of the Province of Rimini for specialized forensic ballistics services."}
+              </span>
             </p>
             <p>
-              <span className="text-cyan-500 font-bold mr-1">[10]</span>
-              <a href="https://www.peritobalisticoforense.it/criminalistica-forense/" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="hover:underline text-slate-400">
-                Studio Bombassei Scienze Forensi - Balistica e ricostruzione 3D
-              </a>
-            </p>
-            <p>
-              <span className="text-cyan-500 font-bold mr-1">[11]</span>
-              <a href="https://www.agenziainvestigativaletracce.it/prezzario" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="hover:underline text-slate-400">
-                Le Tracce Investigazioni - Rimborso chilometrico trasferte
-              </a>
-            </p>
-            <p>
-              <span className="text-cyan-500 font-bold mr-1">[12]</span>
-              <a href="https://idfox.it/blog/costo-investigatore-privato-il-costo-investigatore-privato-non-e-facile-da-calcolare-le-tariffe-variano-per-ogni-agenzia-in-base-alla-complessita-del-caso-scopri-di-piu-sul-sito/" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="hover:underline text-slate-400">
-                ID Fox Blog - Calcolo della complessità del caso forense
-              </a>
-            </p>
-            <p>
-              <span className="text-cyan-500 font-bold mr-1">[13]</span>
-              <a href="https://www.italiainvestigazioni.com/tariffe-e-costi-investigatore-privato-marche/" target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="hover:underline text-slate-400">
-                Italia Investigazioni - Deposito tariffe in Prefettura
-              </a>
+              <span className="text-cyan-500 font-bold mr-1">[6]</span>
+              <span className="text-slate-400">
+                {isIt 
+                  ? "Tabelle Nazionali ACI - Parametri per il rimborso chilometrico per attività dello Studio Angelini fuori dal comune di Rimini."
+                  : "National ACI Tables - Mileage reimbursement parameters for Studio Angelini activities outside the municipality of Rimini."}
+              </span>
             </p>
           </div>
         </div>

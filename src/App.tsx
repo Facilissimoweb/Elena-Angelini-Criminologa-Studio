@@ -17,6 +17,7 @@ import Blog from './components/Blog';
 import ForensicChat from './components/ForensicChat';
 import AboutUs from './components/AboutUs';
 import TariffeRimini from './components/TariffeRimini';
+import ForensicLexicon from './components/ForensicLexicon';
 import CookieBanner from './components/CookieBanner';
 import LegalModal, { getStoredConsent, loadGA4 } from './components/LegalModal';
 import { Language, PageId, translations } from './types';
@@ -26,6 +27,7 @@ export default function App() {
   const [lang, setLang] = useState<Language>('it');
   const [currentPage, setCurrentPage] = useState<PageId>('home');
   const [bookingOpen, setBookingOpen] = useState(false);
+  const [lexiconOpen, setLexiconOpen] = useState(false);
 
   // Legal and cookie settings modal state
   const [legalModalOpen, setLegalModalOpen] = useState(false);
@@ -100,6 +102,7 @@ export default function App() {
         currentPage={currentPage}
         setCurrentPage={handlePageChange}
         openBooking={() => setBookingOpen(true)}
+        openLexicon={() => setLexiconOpen(true)}
       />
 
       {/* Main Single Page App Content Area with Page Router Transitions */}
@@ -220,6 +223,13 @@ export default function App() {
         onClose={() => setBookingOpen(false)}
         lang={lang}
         triggerToast={triggerToast}
+      />
+
+      {/* Forensic Lexicon Technical Glossary Popup */}
+      <ForensicLexicon
+        isOpen={lexiconOpen}
+        onClose={() => setLexiconOpen(false)}
+        lang={lang}
       />
 
       {/* Toast Alert feedback popup */}

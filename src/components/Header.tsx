@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, Globe } from 'lucide-react';
+import { Menu, X, Globe, BookOpen } from 'lucide-react';
 import { Language, PageId, translations, languagesList } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -53,6 +53,7 @@ interface HeaderProps {
   currentPage: PageId;
   setCurrentPage: (page: PageId) => void;
   openBooking: () => void;
+  openLexicon: () => void;
 }
 
 export default function Header({
@@ -61,6 +62,7 @@ export default function Header({
   currentPage,
   setCurrentPage,
   openBooking,
+  openLexicon,
 }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
@@ -168,6 +170,17 @@ export default function Header({
 
         {/* CONTROLS */}
         <div className="flex items-center space-x-3">
+          {/* Forensic Lexicon Button */}
+          <button
+            onClick={openLexicon}
+            id="header-lexicon-trigger"
+            className="inline-flex items-center space-x-1.5 bg-slate-950/80 hover:bg-cyan-950/20 text-cyan-400 hover:text-cyan-300 text-[10px] font-bold uppercase tracking-wider px-3.5 py-2.5 rounded border border-cyan-500/20 hover:border-cyan-500/40 transition-all active:scale-95 cursor-pointer font-mono shadow-md shadow-cyan-500/5"
+            title={lang === 'it' ? 'Lessico Forense' : 'Forensic Lexicon'}
+          >
+            <BookOpen className="w-3.5 h-3.5 shrink-0" />
+            <span className="hidden sm:inline">{lang === 'it' ? 'Lessico' : 'Lexicon'}</span>
+          </button>
+
           {/* Desktop CTA */}
           <button
             onClick={openBooking}
@@ -234,6 +247,19 @@ export default function Header({
                   setLang(appCode as Language);
                 }} />
               </div>
+
+              {/* Forensic Lexicon Mobile Trigger */}
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  openLexicon();
+                }}
+                id="mobile-drawer-lexicon-cta"
+                className="w-full bg-slate-900 hover:bg-cyan-950/20 text-cyan-400 border border-cyan-500/20 hover:border-cyan-500/40 text-xs font-bold uppercase tracking-wider py-3.5 rounded transition-all text-center focus:outline-none flex items-center justify-center space-x-2 cursor-pointer font-mono"
+              >
+                <BookOpen className="w-4 h-4" />
+                <span>{lang === 'it' ? 'LESSICO FORENSE' : 'FORENSIC LEXICON'}</span>
+              </button>
 
               <button
                 onClick={() => {

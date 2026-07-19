@@ -108,4 +108,28 @@ export const testimonialsData: TestimonialItem[] = [
     authorKey: 't4-author',
     tagKey: 't-case4',
   },
+  {
+    id: 't5',
+    textKey: 't5-text',
+    authorKey: 't5-author',
+    tagKey: 't-case5',
+  },
+  {
+    id: 't6',
+    textKey: 't6-text',
+    authorKey: 't6-author',
+    tagKey: 't-case6',
+  },
+  {
+    id: 't7',
+    textKey: 't7-text',
+    authorKey: 't7-author',
+    tagKey: 't-case7',
+  },
+  {
+    id: 't8',
+    textKey: 't8-text',
+    authorKey: 't8-author',
+    tagKey: 't-case8',
+  },
 ];
