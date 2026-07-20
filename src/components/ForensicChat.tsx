@@ -137,31 +137,50 @@ export default function ForensicChat({ lang }: ForensicChatProps) {
     let selectedVoice = null;
 
     if (lang === 'it') {
-      // Find a standard male Italian voice if available
+      // Find a premium, natural or high-quality Italian male voice if available
       selectedVoice = voices.find(v => 
         v.lang.startsWith('it') && 
-        (v.name.toLowerCase().includes('cosimo') || 
-         v.name.toLowerCase().includes('diego') || 
-         v.name.toLowerCase().includes('male') || 
-         v.name.toLowerCase().includes('piero') || 
-         v.name.toLowerCase().includes('molo') || 
-         v.name.toLowerCase().includes('guy') || 
-         v.name.toLowerCase().includes('vittorio'))
+        (v.name.toLowerCase().includes('google') || v.name.toLowerCase().includes('natural') || v.name.toLowerCase().includes('microsoft')) &&
+        (v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('uomo') || v.name.toLowerCase().includes('cosimo') || v.name.toLowerCase().includes('diego') || v.name.toLowerCase().includes('piero') || v.name.toLowerCase().includes('vittorio'))
       );
+      if (!selectedVoice) {
+        selectedVoice = voices.find(v => 
+          v.lang.startsWith('it') && 
+          (v.name.toLowerCase().includes('cosimo') || 
+           v.name.toLowerCase().includes('diego') || 
+           v.name.toLowerCase().includes('male') || 
+           v.name.toLowerCase().includes('uomo') || 
+           v.name.toLowerCase().includes('piero') || 
+           v.name.toLowerCase().includes('molo') || 
+           v.name.toLowerCase().includes('guy') || 
+           v.name.toLowerCase().includes('vittorio') ||
+           v.name.toLowerCase().includes('luca') ||
+           v.name.toLowerCase().includes('roberto') ||
+           v.name.toLowerCase().includes('siri'))
+        );
+      }
       if (!selectedVoice) {
         selectedVoice = voices.find(v => v.lang.startsWith('it'));
       }
     } else {
-      // Find a standard male English voice if available
+      // Find a premium, natural or high-quality English male voice if available
       selectedVoice = voices.find(v => 
         v.lang.startsWith('en') && 
-        (v.name.toLowerCase().includes('david') || 
-         v.name.toLowerCase().includes('james') || 
-         v.name.toLowerCase().includes('mark') || 
-         v.name.toLowerCase().includes('male') || 
-         v.name.toLowerCase().includes('guy') || 
-         v.name.toLowerCase().includes('george'))
+        (v.name.toLowerCase().includes('google') || v.name.toLowerCase().includes('natural') || v.name.toLowerCase().includes('microsoft')) &&
+        (v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('guy') || v.name.toLowerCase().includes('david') || v.name.toLowerCase().includes('james'))
       );
+      if (!selectedVoice) {
+        selectedVoice = voices.find(v => 
+          v.lang.startsWith('en') && 
+          (v.name.toLowerCase().includes('david') || 
+           v.name.toLowerCase().includes('james') || 
+           v.name.toLowerCase().includes('mark') || 
+           v.name.toLowerCase().includes('male') || 
+           v.name.toLowerCase().includes('guy') || 
+           v.name.toLowerCase().includes('george') ||
+           v.name.toLowerCase().includes('siri'))
+        );
+      }
       if (!selectedVoice) {
         selectedVoice = voices.find(v => v.lang.startsWith('en'));
       }
@@ -171,9 +190,18 @@ export default function ForensicChat({ lang }: ForensicChatProps) {
       utterance.voice = selectedVoice;
     }
 
-    // Set pitch and rate to convey a calm, standard, fluid male tone
-    utterance.pitch = 0.88;
-    utterance.rate = 0.95;
+    // Detect if the user is on an Apple device (macOS, iOS, Safari)
+    const isApple = typeof navigator !== 'undefined' && 
+      (/Macintosh|MacIntel|iPad|iPhone|iPod/.test(navigator.userAgent) || 
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1));
+
+    if (!isApple) {
+      // On non-Apple platforms, configure a highly fluid and natural standard tone (pitch 1.0, speed 1.05)
+      utterance.pitch = 1.0;
+      utterance.rate = 1.05; // A rate of 1.05 sounds significantly more fluid and conversational
+    } else {
+      // On Apple devices, leave the classic native system settings untouched as requested
+    }
 
     utterance.onend = () => {
       setActiveSpeakingIndex(null);
