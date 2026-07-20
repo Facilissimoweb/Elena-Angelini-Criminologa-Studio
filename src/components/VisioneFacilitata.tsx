@@ -29,6 +29,23 @@ const safeSetItem = (key: string, value: string): void => {
 
 export default function VisioneFacilitata({ lang }: VisioneFacilitataProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
+  // Sync state with global event to avoid mobile overlapping
+  useEffect(() => {
+    const handleChatToggle = (e: any) => {
+      setIsChatOpen(e.detail?.open || false);
+    };
+    window.addEventListener('forensic-chat-toggle', handleChatToggle);
+    return () => {
+      window.removeEventListener('forensic-chat-toggle', handleChatToggle);
+    };
+  }, []);
+
+  // Dispatch accessibility toggle state
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('accessibility-toggle', { detail: { open: isOpen } }));
+  }, [isOpen]);
 
   // States initialized from localStorage if available
   const [highContrast, setHighContrast] = useState<boolean>(() => {
@@ -222,17 +239,19 @@ export default function VisioneFacilitata({ lang }: VisioneFacilitataProps) {
   return (
     <>
       {/* Floating Widget Button */}
-      <div className="fixed bottom-6 left-6 z-[9990] select-none">
-        <button
-          id="accessibility-widget-btn"
-          onClick={() => setIsOpen(true)}
-          className="flex items-center space-x-2 bg-gradient-to-r from-cyan-600 to-cold-500 hover:from-cyan-500 hover:to-cold-400 text-white font-mono text-xs uppercase tracking-wider font-bold p-3 sm:px-4 sm:py-3 rounded-full shadow-[0_0_15px_rgba(14,165,233,0.3)] hover:shadow-[0_0_20px_rgba(14,165,233,0.5)] border border-cyan-400/20 active:scale-95 transition-all duration-150 cursor-pointer"
-          title={currentT.btnTitle}
-        >
-          <Accessibility className="h-5 w-5 animate-pulse shrink-0" />
-          <span className="hidden sm:inline">{currentT.btnTitle}</span>
-        </button>
-      </div>
+      {!isChatOpen && (
+        <div className="fixed bottom-6 left-6 z-[9990] select-none">
+          <button
+            id="accessibility-widget-btn"
+            onClick={() => setIsOpen(true)}
+            className="flex items-center space-x-2 bg-gradient-to-r from-cyan-600 to-cold-500 hover:from-cyan-500 hover:to-cold-400 text-white font-mono text-xs uppercase tracking-wider font-bold p-3 sm:px-4 sm:py-3 rounded-full shadow-[0_0_15px_rgba(14,165,233,0.3)] hover:shadow-[0_0_20px_rgba(14,165,233,0.5)] border border-cyan-400/20 active:scale-95 transition-all duration-150 cursor-pointer"
+            title={currentT.btnTitle}
+          >
+            <Accessibility className="h-5 w-5 animate-pulse shrink-0" />
+            <span className="hidden sm:inline">{currentT.btnTitle}</span>
+          </button>
+        </div>
+      )}
 
       {/* Side drawer / modal for Accessibility Options */}
       <AnimatePresence>

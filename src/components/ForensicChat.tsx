@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { MessageSquare, X, Send, ShieldCheck, HelpCircle, Activity } from 'lucide-react';
+import { MessageSquare, X, Send, ShieldCheck, HelpCircle, Activity, Mic, MicOff, Volume2, Square } from 'lucide-react';
 import { Language } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -18,6 +18,174 @@ export default function ForensicChat({ lang }: ForensicChatProps) {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Audio / Speech Recognition and Synthesis States
+  const [isRecording, setIsRecording] = useState(false);
+  const [activeSpeakingIndex, setActiveSpeakingIndex] = useState<number | null>(null);
+  const [isSpeechSupported, setIsSpeechSupported] = useState(false);
+  const [isAccessibilityOpen, setIsAccessibilityOpen] = useState(false);
+  const recognitionRef = useRef<any>(null);
+
+  // Sync state with global event to avoid mobile overlapping
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('forensic-chat-toggle', { detail: { open: isOpen } }));
+    if (!isOpen && typeof window !== 'undefined' && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      setActiveSpeakingIndex(null);
+    }
+  }, [isOpen]);
+
+  // Sync with accessibility state changes
+  useEffect(() => {
+    const handleAccToggle = (e: any) => {
+      setIsAccessibilityOpen(e.detail?.open || false);
+    };
+    window.addEventListener('accessibility-toggle', handleAccToggle);
+    return () => {
+      window.removeEventListener('accessibility-toggle', handleAccToggle);
+    };
+  }, []);
+
+  // Initialize Speech Recognition
+  useEffect(() => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      setIsSpeechSupported(true);
+      const rec = new SpeechRecognition();
+      rec.continuous = false;
+      rec.interimResults = false;
+      rec.lang = lang === 'it' ? 'it-IT' : 'en-US';
+
+      rec.onstart = () => {
+        setIsRecording(true);
+      };
+
+      rec.onend = () => {
+        setIsRecording(false);
+      };
+
+      rec.onerror = (event: any) => {
+        console.error("Speech recognition error", event.error);
+        setIsRecording(false);
+      };
+
+      rec.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        if (transcript) {
+          setInputValue((prev) => {
+            const space = prev && !prev.endsWith(' ') ? ' ' : '';
+            return prev + space + transcript;
+          });
+        }
+      };
+
+      recognitionRef.current = rec;
+    }
+
+    // Load voices in background
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      window.speechSynthesis.getVoices();
+    }
+
+    return () => {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch (e) {}
+      }
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, [lang]);
+
+  const toggleRecording = () => {
+    if (!recognitionRef.current) return;
+    if (isRecording) {
+      recognitionRef.current.stop();
+    } else {
+      try {
+        recognitionRef.current.start();
+      } catch (err) {
+        console.error("Failed to start speech recognition:", err);
+      }
+    }
+  };
+
+  const toggleSpeak = (text: string, index: number) => {
+    if (!window.speechSynthesis) return;
+
+    if (activeSpeakingIndex === index) {
+      window.speechSynthesis.cancel();
+      setActiveSpeakingIndex(null);
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+
+    // Strip markdown formatting for cleaner reading
+    const cleanText = text
+      .replace(/\*\*/g, '')
+      .replace(/\*/g, '')
+      .replace(/#+/g, '')
+      .replace(/`+/g, '');
+
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.lang = lang === 'it' ? 'it-IT' : 'en-US';
+
+    const voices = window.speechSynthesis.getVoices();
+    let selectedVoice = null;
+
+    if (lang === 'it') {
+      // Find a standard male Italian voice if available
+      selectedVoice = voices.find(v => 
+        v.lang.startsWith('it') && 
+        (v.name.toLowerCase().includes('cosimo') || 
+         v.name.toLowerCase().includes('diego') || 
+         v.name.toLowerCase().includes('male') || 
+         v.name.toLowerCase().includes('piero') || 
+         v.name.toLowerCase().includes('molo') || 
+         v.name.toLowerCase().includes('guy') || 
+         v.name.toLowerCase().includes('vittorio'))
+      );
+      if (!selectedVoice) {
+        selectedVoice = voices.find(v => v.lang.startsWith('it'));
+      }
+    } else {
+      // Find a standard male English voice if available
+      selectedVoice = voices.find(v => 
+        v.lang.startsWith('en') && 
+        (v.name.toLowerCase().includes('david') || 
+         v.name.toLowerCase().includes('james') || 
+         v.name.toLowerCase().includes('mark') || 
+         v.name.toLowerCase().includes('male') || 
+         v.name.toLowerCase().includes('guy') || 
+         v.name.toLowerCase().includes('george'))
+      );
+      if (!selectedVoice) {
+        selectedVoice = voices.find(v => v.lang.startsWith('en'));
+      }
+    }
+
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+    }
+
+    // Set pitch and rate to convey a calm, standard, fluid male tone
+    utterance.pitch = 0.88;
+    utterance.rate = 0.95;
+
+    utterance.onend = () => {
+      setActiveSpeakingIndex(null);
+    };
+
+    utterance.onerror = () => {
+      setActiveSpeakingIndex(null);
+    };
+
+    setActiveSpeakingIndex(index);
+    window.speechSynthesis.speak(utterance);
+  };
 
   // Initialize welcome message when language changes
   useEffect(() => {
@@ -89,7 +257,7 @@ export default function ForensicChat({ lang }: ForensicChatProps) {
   return (
     <>
       {/* Floating Launcher Action Button */}
-      {!isOpen && (
+      {!isOpen && !isAccessibilityOpen && (
         <motion.button
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -107,12 +275,12 @@ export default function ForensicChat({ lang }: ForensicChatProps) {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 50, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 50, scale: 0.95 }}
-            transition={{ duration: 0.25 }}
-            // Full-screen on mobile (w-full h-full inset-0), compact overlay on desktop
-            className="fixed md:bottom-6 md:right-6 md:w-[420px] md:h-[620px] md:rounded-2xl w-full h-full inset-0 z-50 bg-slate-950 border border-slate-900 flex flex-col shadow-2xl overflow-hidden"
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 100 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+            // Full-screen on mobile, full-height sidebar on the right on desktop
+            className="fixed inset-0 w-full h-full md:left-auto md:right-0 md:top-0 md:bottom-0 md:h-screen md:w-[460px] md:rounded-none z-[9995] bg-slate-950 border-l border-slate-900 flex flex-col shadow-2xl overflow-hidden"
           >
             {/* Header section with forensic credentials */}
             <div className="bg-slate-900 px-4 py-3.5 border-b border-slate-850 flex items-center justify-between">
@@ -156,20 +324,39 @@ export default function ForensicChat({ lang }: ForensicChatProps) {
                 return (
                   <div
                     key={index}
-                    className={`flex ${isAssistant ? 'justify-start' : 'justify-end'} text-left`}
+                    className={`flex ${isAssistant ? 'justify-start' : 'justify-end'} items-start space-x-2 text-left`}
                   >
                     <div
-                      className={`max-w-[85%] rounded-xl px-4 py-3 text-sm leading-relaxed ${
+                      className={`max-w-[80%] rounded-xl px-4 py-3 text-sm leading-relaxed ${
                         isAssistant
                           ? 'bg-slate-900/70 border border-slate-850 text-slate-200'
                           : 'bg-cold-500 text-white border border-cold-400/20'
                       }`}
                     >
-                      <p className="whitespace-pre-wrap font-sans">{msg.content}</p>
+                      <p className="whitespace-pre-wrap font-sans text-xs md:text-sm">{msg.content}</p>
                       <span className="block text-[8px] font-mono text-slate-400/80 mt-1 text-right uppercase">
                         {isAssistant ? 'Forensic System' : 'Secured User'}
                       </span>
                     </div>
+
+                    {isAssistant && (
+                      <button
+                        type="button"
+                        onClick={() => toggleSpeak(msg.content, index)}
+                        className={`p-2 rounded-lg border transition-all cursor-pointer active:scale-90 self-center ${
+                          activeSpeakingIndex === index
+                            ? 'bg-cyan-500/15 border-cyan-500/40 text-cyan-400 animate-pulse'
+                            : 'bg-slate-900/80 border-slate-850 text-slate-400 hover:text-cyan-400 hover:border-cyan-500/20'
+                        }`}
+                        title={lang === 'it' ? 'Ascolta risposta' : 'Listen to response'}
+                      >
+                        {activeSpeakingIndex === index ? (
+                          <Square className="w-3.5 h-3.5 fill-cyan-400/20" />
+                        ) : (
+                          <Volume2 className="w-3.5 h-3.5" />
+                        )}
+                      </button>
+                    )}
                   </div>
                 );
               })}
@@ -217,13 +404,42 @@ export default function ForensicChat({ lang }: ForensicChatProps) {
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder={lang === 'it' ? 'Scrivi un quesito forense...' : 'Type a forensic inquiry...'}
+                placeholder={
+                  isRecording 
+                    ? (lang === 'it' ? 'Ascolto attivo... parla ora' : 'Listening... speak now') 
+                    : (lang === 'it' ? 'Scrivi un quesito forense...' : 'Type a forensic inquiry...')
+                }
                 disabled={isLoading}
-                className="flex-1 bg-slate-950 text-slate-100 border border-slate-850 rounded-lg px-3.5 py-3 text-sm focus:outline-none focus:border-cold-400 disabled:opacity-50 font-sans"
+                className="flex-1 bg-slate-950 text-slate-100 border border-slate-850 rounded-lg px-3.5 py-3 text-xs md:text-sm focus:outline-none focus:border-cold-400 disabled:opacity-50 font-sans"
               />
+
+              {isSpeechSupported && (
+                <button
+                  type="button"
+                  onClick={toggleRecording}
+                  disabled={isLoading}
+                  className={`p-3 rounded-lg border transition-all cursor-pointer active:scale-95 flex items-center justify-center ${
+                    isRecording
+                      ? 'bg-red-600 border-red-500 text-white animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.5)]'
+                      : 'bg-slate-950 border-slate-850 text-slate-400 hover:text-cyan-400 hover:border-cyan-500/20'
+                  }`}
+                  title={
+                    lang === 'it' 
+                      ? (isRecording ? 'Ferma dettatura' : 'Dettatura vocale') 
+                      : (isRecording ? 'Stop voice typing' : 'Voice typing')
+                  }
+                >
+                  {isRecording ? (
+                    <MicOff className="w-4 h-4 text-white" />
+                  ) : (
+                    <Mic className="w-4 h-4 text-cyan-400" />
+                  )}
+                </button>
+              )}
+
               <button
                 type="submit"
-                disabled={isLoading || !inputValue.trim()}
+                disabled={isLoading || (!inputValue.trim() && !isRecording)}
                 className="p-3 rounded-lg bg-cold-500 hover:bg-cold-600 disabled:bg-slate-800 disabled:text-slate-600 text-white flex items-center justify-center transition-colors cursor-pointer active:scale-95 border border-cold-400/20"
               >
                 <Send className="w-4 h-4" />
